@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Image - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-images"></i> Assets
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <a href="dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                    <h2 class="page-title">Generate Image</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-text-sm secondary" id="resetBtn"><i class="fa-solid fa-rotate-left"></i>
+                        Reset</button>
+                    <button class="btn-primary-sm" id="downloadBtn"><i class="fa-solid fa-download"></i>
+                        Download</button>
+                </div>
+            </header>
+
+            <div class="editor-grid">
+
+                <!-- Controls Panel -->
+                <div class="controls-panel">
+                    <div class="control-group">
+                        <label>Template</label>
+                        <div class="template-grid">
+                            <div class="template-thumb active" data-template="minimal"
+                                style="background:linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)"></div>
+                            <div class="template-thumb" data-template="bold"
+                                style="background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)"></div>
+                            <div class="template-thumb" data-template="image-focus"
+                                style="background:linear-gradient(135deg, #1f2937 0%, #111827 100%)"></div>
+                            <div class="template-thumb" data-template="quote"
+                                style="background:linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)"></div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Main Text</label>
+                        <textarea id="mainText" rows="3">Summer Sale is Live! 50% Off.</textarea>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Brand Colors</label>
+                        <div class="color-swatches">
+                            <div class="swatch active" style="background: #4f46e5;" data-color="#4f46e5"></div>
+                            <div class="swatch" style="background: #ec4899;" data-color="#ec4899"></div>
+                            <div class="swatch" style="background: #10b981;" data-color="#10b981"></div>
+                            <div class="swatch" style="background: #1f2937;" data-color="#1f2937"></div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="toggle-row">
+                            <label>Show Logo</label>
+                            <input type="checkbox" id="showLogo" checked>
+                        </div>
+                    </div>
+
+                    <div class="control-tip">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>AI automatically adjusts font sizes and layout based on your text.</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Area -->
+                <div class="canvas-area">
+                    <div class="canvas-container">
+                        <canvas id="mainCanvas" width="1080" height="1080"></canvas>
+                    </div>
+
+                    <div class="canvas-toolbar">
+                        <button class="tool-btn active" title="1:1 Square"><i class="fa-regular fa-square"></i></button>
+                        <button class="tool-btn" title="9:16 Story"><i class="fa-solid fa-mobile-screen"></i></button>
+                        <button class="tool-btn" title="16:9 Landscape"><i class="fa-regular fa-image"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="image_editor.js"></script>
+</body>
+
+</html>

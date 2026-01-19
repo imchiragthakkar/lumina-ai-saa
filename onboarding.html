@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Your Brand - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css"> <!-- Reusing base auth styles -->
+    <link rel="stylesheet" href="onboarding.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="auth-container onboarding-container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
+        </div>
+
+        <div class="auth-card onboarding-card">
+            <div class="auth-header">
+                <a href="#" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+
+            <form id="onboardingForm" action="#">
+                <!-- Step 1: Basics -->
+                <div class="step active" id="step1">
+                    <h2>Tell us about your business</h2>
+                    <p class="subtitle">We'll tailor your content based on this.</p>
+
+                    <div class="form-group">
+                        <label for="businessName">Business Name</label>
+                        <input type="text" id="businessName" placeholder="e.g. Acme Bakery" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <select id="industry" required>
+                            <option value="" disabled selected>Select your industry</option>
+                            <option value="retail">Retail & E-commerce</option>
+                            <option value="food">Food & Beverage</option>
+                            <option value="health">Health & Wellness</option>
+                            <option value="tech">Technology & SaaS</option>
+                            <option value="services">Professional Services</option>
+                            <option value="fashion">Fashion & Beauty</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="language">Content Language</label>
+                        <select id="language" required>
+                            <option value="en">English (US)</option>
+                            <option value="en-uk">English (UK)</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Tone -->
+                <div class="step" id="step2">
+                    <h2>Define your brand voice</h2>
+                    <p class="subtitle">How should your AI sound?</p>
+
+                    <div class="tone-grid">
+                        <input type="radio" name="tone" id="professional" value="professional" class="tone-radio"
+                            required>
+                        <label for="professional" class="tone-card">
+                            <span class="tone-icon">👔</span>
+                            <span class="tone-name">Professional</span>
+                            <span class="tone-desc">Trustworthy, expert, clear.</span>
+                        </label>
+
+                        <input type="radio" name="tone" id="friendly" value="friendly" class="tone-radio">
+                        <label for="friendly" class="tone-card">
+                            <span class="tone-icon">👋</span>
+                            <span class="tone-name">Friendly</span>
+                            <span class="tone-desc">Warm, approachable, helpful.</span>
+                        </label>
+
+                        <input type="radio" name="tone" id="luxury" value="luxury" class="tone-radio">
+                        <label for="luxury" class="tone-card">
+                            <span class="tone-icon">💎</span>
+                            <span class="tone-name">Luxury</span>
+                            <span class="tone-desc">Elegant, exclusive, refined.</span>
+                        </label>
+
+                        <input type="radio" name="tone" id="energetic" value="energetic" class="tone-radio">
+                        <label for="energetic" class="tone-card">
+                            <span class="tone-icon">⚡</span>
+                            <span class="tone-name">Energetic</span>
+                            <span class="tone-desc">Exciting, bold, active.</span>
+                        </label>
+
+                        <input type="radio" name="tone" id="devotional" value="devotional" class="tone-radio">
+                        <label for="devotional" class="tone-card">
+                            <span class="tone-icon">🙏</span>
+                            <span class="tone-name">Devotional</span>
+                            <span class="tone-desc">Respectful, calm, mindful.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 3: Visuals -->
+                <div class="step" id="step3">
+                    <h2>Add your branding</h2>
+                    <p class="subtitle">Personalize your generated visuals.</p>
+
+                    <div class="form-group">
+                        <label>Brand Colors</label>
+                        <div class="color-picker-group">
+                            <div class="color-input-wrapper">
+                                <label for="primaryColor">Primary</label>
+                                <div class="color-field">
+                                    <input type="color" id="primaryColor" value="#6366f1">
+                                    <span class="color-hex">#6366f1</span>
+                                </div>
+                            </div>
+                            <div class="color-input-wrapper">
+                                <label for="secondaryColor">Secondary</label>
+                                <div class="color-field">
+                                    <input type="color" id="secondaryColor" value="#ec4899">
+                                    <span class="color-hex">#ec4899</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Logo Upload</label>
+                        <div class="file-upload-area" id="dropZone">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <span class="file-info">SVG, PNG, JPG (Max 2MB)</span>
+                            <input type="file" id="logoUpload" accept="image/*" hidden>
+                        </div>
+                        <div class="file-preview hidden" id="filePreview">
+                            <img src="" alt="Preview" id="previewImg">
+                            <span class="file-name" id="fileName">logo.png</span>
+                            <button type="button" class="remove-file" id="removeFile">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="wizard-nav">
+                    <button type="button" class="btn-text" id="prevBtn" style="visibility: hidden;">Back</button>
+                    <button type="button" class="btn-submit" id="nextBtn">Next step</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="onboarding.js"></script>
+</body>
+
+</html>

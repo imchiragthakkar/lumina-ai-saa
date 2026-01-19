@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Platform - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calendar-days"></i> Schedule
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                        <span class="workspace">Acme Bakery</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <a href="create_post.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                    <h2 class="page-title">New Promotional Post</h2>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="step-container">
+
+                    <!-- Section A: Platforms -->
+                    <div class="selection-section">
+                        <h3>1. Choose Platforms</h3>
+                        <p class="section-desc">Select where you want to publish.</p>
+
+                        <div class="platforms-grid">
+                            <label class="platform-checkbox">
+                                <input type="checkbox" name="platform" value="instagram" checked>
+                                <div class="platform-card">
+                                    <div class="platform-icon ig"><i class="fa-brands fa-instagram"></i></div>
+                                    <span class="platform-name">Instagram</span>
+                                    <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                </div>
+                            </label>
+
+                            <label class="platform-checkbox">
+                                <input type="checkbox" name="platform" value="facebook">
+                                <div class="platform-card">
+                                    <div class="platform-icon fb"><i class="fa-brands fa-facebook-f"></i></div>
+                                    <span class="platform-name">Facebook</span>
+                                    <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                </div>
+                            </label>
+
+                            <label class="platform-checkbox">
+                                <input type="checkbox" name="platform" value="twitter">
+                                <div class="platform-card">
+                                    <div class="platform-icon x"><i class="fa-brands fa-x-twitter"></i></div>
+                                    <span class="platform-name">X (Twitter)</span>
+                                    <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                </div>
+                            </label>
+
+                            <label class="platform-checkbox">
+                                <input type="checkbox" name="platform" value="linkedin">
+                                <div class="platform-card">
+                                    <div class="platform-icon li"><i class="fa-brands fa-linkedin-in"></i></div>
+                                    <span class="platform-name">LinkedIn</span>
+                                    <div class="check-circle"><i class="fa-solid fa-check"></i></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Section B: Format -->
+                    <div class="selection-section">
+                        <h3>2. Select Format</h3>
+                        <p class="section-desc">Choose the size for your content.</p>
+
+                        <div class="formats-grid">
+                            <label class="format-radio">
+                                <input type="radio" name="format" value="post" checked>
+                                <div class="format-card">
+                                    <div class="aspect-preview square"></div>
+                                    <span class="format-name">Post</span>
+                                    <span class="format-dims">1080 x 1080</span>
+                                </div>
+                            </label>
+
+                            <label class="format-radio">
+                                <input type="radio" name="format" value="story">
+                                <div class="format-card">
+                                    <div class="aspect-preview portrait"></div>
+                                    <span class="format-name">Story</span>
+                                    <span class="format-dims">1080 x 1920</span>
+                                </div>
+                            </label>
+
+                            <label class="format-radio">
+                                <input type="radio" name="format" value="reel">
+                                <div class="format-card">
+                                    <div class="aspect-preview portrait"></div>
+                                    <span class="format-name">Reel Cover</span>
+                                    <span class="format-dims">1080 x 1920</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="action-footer">
+                        <a href="generate.html" class="btn-primary full-width"
+                            style="text-decoration: none; text-align: center;">Continue to Edit <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

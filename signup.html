@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <!-- Using Google Icons for the G logo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="index.html" class="logo">Lumina<span class="highlight">AI</span></a>
+                <h1>Create your free account</h1>
+                <p class="subtitle">Join 10,000+ creators growing with AI</p>
+            </div>
+
+            <button class="btn-google">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon">
+                Sign up with Google
+            </button>
+
+            <div class="divider">
+                <span>or continue with email</span>
+            </div>
+
+            <form class="auth-form" action="onboarding.html">
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input type="email" id="email" name="email" placeholder="name@company.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Min. 8 characters" required>
+                </div>
+
+                <div class="form-check">
+                    <p class="microcopy">
+                        By clicking "Create Account", you agree to our
+                        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                    </p>
+                </div>
+
+                <button type="submit" class="btn-submit">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="#">Log in</a></p>
+                <div class="trust-badge">
+                    <i class="fa-solid fa-shield-halved"></i> No credit card required • Cancel anytime
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

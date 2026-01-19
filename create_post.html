@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Content - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Same as dashboard) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calendar-days"></i> Schedule
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Brand Voice
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-chart-pie"></i> Analytics
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                        <span class="workspace">Acme Bakery</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <a href="dashboard.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                    <h2 class="page-title">Create New Post</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon"><i class="fa-regular fa-bell"></i></button>
+                    <!-- <button class="btn-primary-sm"><i class="fa-solid fa-plus"></i> Create Post</button> -->
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="selection-header center">
+                    <h1>What do you want to create?</h1>
+                    <p class="subtitle">Choose a post type to get started.</p>
+                </div>
+
+                <div class="selection-grid">
+                    <!-- Promotional -->
+                    <a href="select_platform.html" class="selection-card">
+                        <div class="icon-split">
+                            <i class="fa-solid fa-bullhorn" style="color: #6366f1;"></i>
+                        </div>
+                        <div class="selection-info">
+                            <h3>Promotional</h3>
+                            <p>Boost sales with special offers, discounts, and announcements.</p>
+                        </div>
+                        <div class="selection-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    <!-- Festival -->
+                    <a href="select_platform.html" class="selection-card">
+                        <div class="icon-split">
+                            <i class="fa-solid fa-party-horn" style="color: #ec4899;"></i>
+                        </div>
+                        <div class="selection-info">
+                            <h3>Festival & Events</h3>
+                            <p>Celebrate holidays, seasons, and special occasions.</p>
+                        </div>
+                        <div class="selection-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    <!-- Quote -->
+                    <a href="select_platform.html" class="selection-card">
+                        <div class="icon-split">
+                            <i class="fa-solid fa-quote-left" style="color: #8b5cf6;"></i>
+                        </div>
+                        <div class="selection-info">
+                            <h3>Inspo Quote</h3>
+                            <p>Share wisdom, motivation, or testimonials to inspire.</p>
+                        </div>
+                        <div class="selection-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    <!-- Product -->
+                    <a href="select_platform.html" class="selection-card">
+                        <div class="icon-split">
+                            <i class="fa-solid fa-tag" style="color: #10b981;"></i>
+                        </div>
+                        <div class="selection-info">
+                            <h3>Product Spotlight</h3>
+                            <p>Showcase a new arrival, best-seller, or specific feature.</p>
+                        </div>
+                        <div class="selection-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+
+                    <!-- Educational -->
+                    <a href="select_platform.html" class="selection-card">
+                        <div class="icon-split">
+                            <i class="fa-solid fa-lightbulb" style="color: #f59e0b;"></i>
+                        </div>
+                        <div class="selection-info">
+                            <h3>Educational</h3>
+                            <p>Share tips, how-tos, and industry knowledge.</p>
+                        </div>
+                        <div class="selection-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

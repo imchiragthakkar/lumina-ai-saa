@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Preview - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calendar-days"></i> Schedule
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <a href="generate.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Editor</a>
+                    <h2 class="page-title">Final Preview</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-text-sm secondary"><i class="fa-regular fa-bookmark"></i> Save Draft</button>
+                    <button class="btn-primary-sm" onclick="alert('Post scheduled!')"><i
+                            class="fa-solid fa-paper-plane"></i> Schedule Post</button>
+                </div>
+            </header>
+
+            <div class="preview-grid">
+
+                <!-- Phone Mockup Area -->
+                <div class="mockup-area">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+
+                        <!-- Instagram UI -->
+                        <div class="ig-app">
+                            <div class="ig-header">
+                                <div class="ig-user">
+                                    <div class="ig-avatar">AB</div>
+                                    <span class="ig-username">acme_bakery</span>
+                                </div>
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </div>
+
+                            <div class="ig-image-container">
+                                <!-- Placeholder Image -->
+                                <div class="mock-img-placeholder">
+                                    <i class="fa-regular fa-image"></i>
+                                    <span>Generated Image</span>
+                                </div>
+                            </div>
+
+                            <div class="ig-actions">
+                                <div class="ig-left-actions">
+                                    <i class="fa-regular fa-heart"></i>
+                                    <i class="fa-regular fa-comment"></i>
+                                    <i class="fa-regular fa-paper-plane"></i>
+                                </div>
+                                <i class="fa-regular fa-bookmark"></i>
+                            </div>
+
+                            <div class="ig-content">
+                                <div class="ig-likes">Liked by <strong>foodie_jane</strong> and <strong>others</strong>
+                                </div>
+                                <div class="ig-caption">
+                                    <strong>acme_bakery</strong> Ready to elevate your morning routine? 🚀<br><br>
+                                    We're thrilled to introduce our new Summer Strawberry Croissant! It's not just a
+                                    pastry, it's a lifestyle upgrade. ✨<br><br>
+                                    Experience the crunch today. Link in bio! 🛍️<br><br>
+                                    <span class="ig-hashtags">#LuminaAI #Growth #NewLaunch #BakeryLife</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Actions Sidebar -->
+                <div class="export-panel">
+                    <h3>Export Options</h3>
+
+                    <div class="export-card">
+                        <div class="export-icon"><i class="fa-solid fa-download"></i></div>
+                        <div class="export-info">
+                            <h4>Download Image</h4>
+                            <p>High quality PNG</p>
+                        </div>
+                        <button class="btn-sm-outline">Save</button>
+                    </div>
+
+                    <div class="export-card">
+                        <div class="export-icon"><i class="fa-regular fa-copy"></i></div>
+                        <div class="export-info">
+                            <h4>Copy Caption</h4>
+                            <p>Text & Hashtags</p>
+                        </div>
+                        <button class="btn-sm-outline">Copy</button>
+                    </div>
+
+                    <div class="export-card">
+                        <div class="export-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="export-info">
+                            <h4>Add to Calendar</h4>
+                            <p>Schedule for later</p>
+                        </div>
+                        <button class="btn-sm-outline">Add</button>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <p>Your post is optimized for Instagram's algorithm.</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

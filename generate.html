@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Content - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Same as dashboard) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calendar-days"></i> Schedule
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                        <span class="workspace">Acme Bakery</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <a href="select_platform.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                    <h2 class="page-title">Generate Content</h2>
+                </div>
+                <div class="header-actions">
+                    <span class="tokens-badge"><i class="fa-solid fa-bolt"></i> 12 Credits Left</span>
+                </div>
+            </header>
+
+            <div class="workspace-grid">
+
+                <!-- Left Panel: Input -->
+                <div class="input-panel">
+                    <div class="panel-header">
+                        <h3>Input Details</h3>
+                        <span class="badge-sm">Instagram Post</span>
+                    </div>
+
+                    <form id="generateForm" class="generate-form">
+                        <div class="form-group">
+                            <label for="topic">What is this post about?</label>
+                            <textarea id="topic"
+                                placeholder="e.g. Launching our new strawberry croissant for summer. It's limited edition and costs $5."
+                                rows="4" required></textarea>
+                            <div class="hint">Be specific about offers, dates, or key details.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="keywords">Key words to include (Optional)</label>
+                            <input type="text" id="keywords" placeholder="fresh, organic, summer vibes">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tone</label>
+                            <div class="tone-selector-sm">
+                                <button type="button" class="tone-btn active">Friendly</button>
+                                <button type="button" class="tone-btn">Professional</button>
+                                <button type="button" class="tone-btn">Excited</button>
+                            </div>
+                        </div>
+
+                        <div class="form-actions-sticky">
+                            <button type="submit" class="btn-primary full-width" id="generateBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Content
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right Panel: Output -->
+                <div class="output-panel">
+                    <div class="panel-header">
+                        <h3>AI Output</h3>
+                        <div class="output-actions" style="display: none;" id="outputActions">
+                            <button class="btn-text-sm" id="copyBtn"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <a href="preview.html" class="btn-text-sm" style="text-decoration:none;"><i
+                                    class="fa-solid fa-eye"></i> Preview</a>
+                            <button class="btn-text-sm" id="regenerateBtn"><i class="fa-solid fa-rotate"></i>
+                                Regenerate</button>
+                        </div>
+                    </div>
+
+                    <div class="output-content" id="outputContent">
+                        <!-- Empty State -->
+                        <div class="empty-state">
+                            <div class="icon-circle icon-pulse">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <p>Fill in the details on the left and hit generate to see magic happening.</p>
+                        </div>
+
+                        <!-- Loading State (Hidden by default) -->
+                        <div class="loading-state hidden" id="loadingState">
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-text short"></div>
+                            <div class="skeleton-text"></div>
+                            <div class="skeleton-tags">
+                                <div class="skeleton-tag"></div>
+                                <div class="skeleton-tag"></div>
+                                <div class="skeleton-tag"></div>
+                            </div>
+                        </div>
+
+                        <!-- Result State (Hidden by default) -->
+                        <div class="result-state hidden" id="resultState">
+
+                            <div class="result-section">
+                                <label class="result-label">Caption</label>
+                                <div class="editable-area" contenteditable="true" id="captionText">
+                                    <!-- Text will be typed here -->
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <label class="result-label">Suggested Hashtags</label>
+                                <div class="tags-container" id="hashtagContainer">
+                                    <!-- Tags will go here -->
+                                </div>
+                            </div>
+
+                            <div class="result-section">
+                                <label class="result-label">Suggested CTA</label>
+                                <div class="cta-box" id="ctaResult">
+                                    <!-- CTA here -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="generate.js"></script>
+</body>
+
+</html>

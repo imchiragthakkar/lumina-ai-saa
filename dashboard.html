@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css"> <!-- Reusing base vars -->
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calendar-days"></i> Schedule
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Brand Voice
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-chart-pie"></i> Analytics
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="settings.html" class="nav-item">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                        <span class="workspace">Acme Bakery</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <h2 class="page-title">Dashboard</h2>
+                <div class="header-actions">
+                    <button class="btn-icon"><i class="fa-regular fa-bell"></i></button>
+                    <a href="create_post.html" class="btn-primary-sm" style="text-decoration:none;"><i
+                            class="fa-solid fa-plus"></i> Create Post</a>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <!-- Welcome & Stats -->
+                <section class="welcome-section">
+                    <div class="welcome-text">
+                        <h1>Good morning, Sarah! 👋</h1>
+                        <p>Ready to create some viral content for <strong>Acme Bakery</strong> today?</p>
+                    </div>
+                    <div class="usage-card">
+                        <div class="usage-header">
+                            <span class="usage-label">Monthly Credits</span>
+                            <span class="usage-count">12/50 used</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: 24%"></div>
+                        </div>
+                        <a href="#" class="upgrade-link">Upgrade Plan</a>
+                    </div>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions-section">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <a href="create_post.html" class="action-card" style="text-decoration:none;">
+                            <div class="icon-box purple"><i class="fa-solid fa-pen-nib"></i></div>
+                            <span class="action-title">Generate Caption</span>
+                            <span class="action-desc">For Instagram & LinkedIn</span>
+                        </a>
+                        <a href="generate_image.html" class="action-card" style="text-decoration:none;">
+                            <div class="icon-box pink"><i class="fa-solid fa-image"></i></div>
+                            <span class="action-title">Generate Image</span>
+                            <span class="action-desc">AI-powered visuals</span>
+                        </a>
+                        <button class="action-card">
+                            <div class="icon-box blue"><i class="fa-solid fa-hashtag"></i></div>
+                            <span class="action-title">Find Hashtags</span>
+                            <span class="action-desc">Trending tags finder</span>
+                        </button>
+                        <button class="action-card">
+                            <div class="icon-box green"><i class="fa-solid fa-calendar-plus"></i></div>
+                            <span class="action-title">Schedule Post</span>
+                            <span class="action-desc">Plan your calendar</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Recent Posts -->
+                <section class="recent-posts-section">
+                    <div class="section-header-flex">
+                        <h3>Recent Generations</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+
+                    <div class="posts-list">
+                        <div class="post-item">
+                            <div class="post-icon instagram"><i class="fa-brands fa-instagram"></i></div>
+                            <div class="post-details">
+                                <span class="post-title">Summer Pastry Collection Launch</span>
+                                <span class="post-meta">Generated 2 hours ago • Instagram Caption</span>
+                            </div>
+                            <span class="status-badge draft">Draft</span>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis"></i></button>
+                        </div>
+
+                        <div class="post-item">
+                            <div class="post-icon linkedin"><i class="fa-brands fa-linkedin-in"></i></div>
+                            <div class="post-details">
+                                <span class="post-title">Employee of the Month Spotli...</span>
+                                <span class="post-meta">Generated yesterday • LinkedIn Post</span>
+                            </div>
+                            <span class="status-badge scheduled">Scheduled</span>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis"></i></button>
+                        </div>
+
+                        <div class="post-item">
+                            <div class="post-icon twitter"><i class="fa-brands fa-twitter"></i></div>
+                            <div class="post-details">
+                                <span class="post-title">Flash Sale Announcement</span>
+                                <span class="post-meta">Generated 3 days ago • Tweet</span>
+                            </div>
+                            <span class="status-badge posted">Posted</span>
+                            <button class="btn-icon-sm"><i class="fa-solid fa-ellipsis"></i></button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
