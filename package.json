@@ -1,0 +1,12 @@
+{
+    "name": "lumina-ai-saas",
+    "version": "1.0.0",
+    "description": "AI Content Generator SaaS",
+    "scripts": {
+        "build": "echo 'No build step required for static site'"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "private": true
+}
