@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "AI Content Generator SaaS",
     "scripts": {
-        "build": "echo 'No build step required for static site'"
+        "build": "mkdir -p public && cp *.html *.css *.js public/"
     },
     "keywords": [],
     "author": "",
