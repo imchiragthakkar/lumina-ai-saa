@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             currentUser = user;
             console.log("Onboarding for: " + user.email);
+
+            // Auto-detect / Pre-fill
+            const nameInput = document.getElementById('userName');
+            const emailInput = document.getElementById('userEmail');
+
+            if (emailInput && user.email) {
+                emailInput.value = user.email;
+            }
+            if (nameInput && user.displayName) {
+                nameInput.value = user.displayName;
+            }
         } else {
             // Redirect to signup if not logged in
             window.location.href = 'signup.html';
@@ -116,6 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nextBtn.disabled = true;
 
         // Collect Data
+        const userName = document.getElementById('userName').value;
+        const userEmail = document.getElementById('userEmail').value;
         const businessName = document.getElementById('businessName').value;
         const industry = document.getElementById('industry').value;
         const language = document.getElementById('language').value;
@@ -131,6 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const logoName = document.getElementById('fileName').innerText;
 
         const brandProfile = {
+            displayName: userName,
+            email: userEmail,
             businessName,
             industry,
             language,

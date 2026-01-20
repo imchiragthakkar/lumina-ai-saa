@@ -33,6 +33,18 @@
                     <h2>Tell us about your business</h2>
                     <p class="subtitle">We'll tailor your content based on this.</p>
 
+                    <div class="form-row" style="display:flex; gap:1rem;">
+                        <div class="form-group" style="flex:1;">
+                            <label for="userName">Your Name</label>
+                            <input type="text" id="userName" placeholder="e.g. John Doe" required>
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label for="userEmail">Email</label>
+                            <input type="email" id="userEmail" placeholder="john@example.com" readonly
+                                style="background-color: #f8fafc; cursor: not-allowed;">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="businessName">Business Name</label>
                         <input type="text" id="businessName" placeholder="e.g. Acme Bakery" required>
