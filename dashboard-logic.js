@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateDashboard(data);
                 } else {
                     console.log("No such document!");
+                    // Ensure we still update the name even if no brand profile exists yet
+                    updateDashboard({});
                 }
             } catch (error) {
                 console.error("Error getting document:", error);
@@ -29,26 +31,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateDashboard(data) {
-        // Update Workspace Name
-        const workspaceEl = document.querySelector('.user-info .workspace');
-        if (workspaceEl && data.businessName) {
-            workspaceEl.textContent = data.businessName;
+        // 1. Update User Name (from Auth or Fallback)
+        const user = auth.currentUser;
+        let displayName = "User";
 
-            // Also update welcome text with bold company name
+        if (user && user.displayName) {
+            displayName = user.displayName;
+        } else if (user && user.email) {
+            displayName = user.email.split('@')[0]; // fallback to email prefix
+        }
+
+        // Update all name fields (sidebar and greeting)
+        // Sidebar Name
+        const sidebarNameEl = document.querySelector('.user-info .name');
+        if (sidebarNameEl) sidebarNameEl.textContent = displayName;
+
+        // Greeting Header
+        const greetingH1 = document.querySelector('.welcome-text h1');
+        if (greetingH1) {
+            const firstName = displayName.split(' ')[0];
+            greetingH1.textContent = `Good morning, ${firstName}! 👋`;
+        }
+
+        // 2. Update Avatar (Initials)
+        const avatarEl = document.querySelector('.avatar');
+        if (avatarEl) {
+            const initials = displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            avatarEl.textContent = initials;
+        }
+
+        // 3. Update Workspace/Company Name (from Firestore)
+        if (data.businessName) {
+            const workspaceEl = document.querySelector('.user-info .workspace');
+            if (workspaceEl) workspaceEl.textContent = data.businessName;
+
+            // Update welcome message paragraph
             const welcomeP = document.querySelector('.welcome-text p');
             if (welcomeP) {
                 welcomeP.innerHTML = `Ready to create some viral content for <strong>${data.businessName}</strong> today?`;
             }
         }
-
-        // Update User Name (if stored, or use part of email)
-        // For now, we didn't explicitly store First/Last on signup, only business details.
-        // We could extract from Social Auth or just keep placeholder/email.
     }
 
     // Logout Functionality
-    // We need to add a logout button to the UI first or attach to existing element
-    // Let's create a logout handler that can be called
     window.handleLogout = async () => {
         try {
             await signOut(auth);
