@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "AI Content Generator SaaS",
     "scripts": {
-        "build": "mkdir -p public && cp *.html *.css *.js public/"
+        "build": "mkdir -p dist && cp *.html *.css *.js dist/"
     },
     "keywords": [],
     "author": "",
