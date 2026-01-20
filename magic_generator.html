@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Generator - Lumina AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .magic-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            height: calc(100vh - 100px);
+            padding: 0 1rem;
+        }
+
+        .chat-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-bubble {
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 90%;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .chat-bubble.ai {
+            background: #f1f5f9;
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-bubble.user {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .input-area {
+            padding: 1rem;
+            background: white;
+        }
+
+        .magic-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .magic-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .btn-magic {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .preview-panel {
+            background: #f8fafc;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease;
+        }
+
+        .remix-bar {
+            position: absolute;
+            bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .btn-remix {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .btn-remix:hover {
+            background: #f1f5f9;
+            color: var(--text-main);
+        }
+
+        .btn-remix.primary {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">Lumina<span class="highlight">AI</span></a>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Magic Generator
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-layer-group"></i> Templates
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div class="user-info">
+                        <span class="name">Sarah Jenkins</span>
+                        <span class="workspace">Acme Bakery</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 class="page-title">Magic Generator</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-text-sm secondary" onclick="window.location.reload()"><i
+                            class="fa-solid fa-rotate-right"></i> Reset</button>
+                    <button class="btn-primary-sm" id="downloadBtn"><i class="fa-solid fa-download"></i>
+                        Download</button>
+                </div>
+            </header>
+
+            <div class="magic-layout">
+                <!-- Left: Chat / Input -->
+                <div class="chat-panel">
+                    <div class="chat-messages" id="chatContainer">
+                        <div class="chat-bubble ai">
+                            Hi! 👋 I'm Lumina. Tell me what you want to post about (e.g., "Summer Sale" or "Motivational
+                            Quote"), and I'll design it for you instantly.
+                        </div>
+                    </div>
+                    <div class="input-area">
+                        <div class="magic-input-group">
+                            <input type="text" class="magic-input" id="topicInput" placeholder="What's this post about?"
+                                autocomplete="off">
+                            <button class="btn-magic" id="generateBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Visual Preview -->
+                <div class="preview-panel">
+                    <div class="canvas-container">
+                        <canvas id="magicCanvas" width="1080" height="1080"
+                            style="width: 400px; height: 400px;"></canvas>
+                    </div>
+
+                    <div class="remix-bar">
+                        <button class="btn-remix primary" id="remixTemplate"><i class="fa-solid fa-shuffle"></i> Remix
+                            Template</button>
+                        <button class="btn-remix" id="remixColor"><i class="fa-solid fa-palette"></i> Colors</button>
+                        <button class="btn-remix" id="remixText"><i class="fa-solid fa-pen-nib"></i> Rewrite</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="dashboard-logic.js"></script>
+    <script type="module" src="magic_generator.js"></script>
+</body>
+
+</html>
