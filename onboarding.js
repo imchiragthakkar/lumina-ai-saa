@@ -1,4 +1,20 @@
+import { db, auth } from "./firebase-config.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Auth Guard
+    let currentUser = null;
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            console.log("Onboarding for: " + user.email);
+        } else {
+            // Redirect to signup if not logged in
+            window.location.href = 'signup.html';
+        }
+    });
+
     let currentStep = 1;
     const totalSteps = 3;
 
@@ -87,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const checked = currentStepEl.querySelector('input[name="tone"]:checked');
             if (!checked) {
                 isValid = false;
-                // Shake effect or warning?
                 alert("Please select a brand tone.");
             }
         }
@@ -95,15 +110,54 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     }
 
-    function finishOnboarding() {
-        nextBtn.textContent = 'Creating account...';
+    async function finishOnboarding() {
+        const submitText = nextBtn.textContent;
+        nextBtn.textContent = 'Saving Profile...';
         nextBtn.disabled = true;
 
-        // Simulate API call
-        setTimeout(() => {
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        // Collect Data
+        const businessName = document.getElementById('businessName').value;
+        const industry = document.getElementById('industry').value;
+        const language = document.getElementById('language').value;
+
+        const toneEl = document.querySelector('input[name="tone"]:checked');
+        const tone = toneEl ? toneEl.value : 'professional';
+
+        const primaryColor = document.getElementById('primaryColor').value;
+        const secondaryColor = document.getElementById('secondaryColor').value;
+
+        // Note: Real file upload would go to Firebase Storage here.
+        // For MVP, we'll skip the actual file upload logic or just store the filename if needed.
+        const logoName = document.getElementById('fileName').innerText;
+
+        const brandProfile = {
+            businessName,
+            industry,
+            language,
+            tone,
+            colors: {
+                primary: primaryColor,
+                secondary: secondaryColor
+            },
+            logo: logoName, // Placeholder or URL after storage upload
+            onboardingCompleted: true,
+            createdAt: new Date().toISOString()
+        };
+
+        try {
+            if (currentUser) {
+                await setDoc(doc(db, "users", currentUser.uid), brandProfile);
+                console.log("Profile saved!");
+                window.location.href = 'dashboard.html';
+            } else {
+                throw new Error("No user authenticated");
+            }
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            alert("Failed to save profile: " + error.message);
+            nextBtn.textContent = submitText;
+            nextBtn.disabled = false;
+        }
     }
 
     // Color Inputs update
@@ -122,33 +176,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileName = document.getElementById('fileName');
     const removeFileBtn = document.getElementById('removeFile');
 
-    dropZone.addEventListener('click', () => fileInput.click());
+    if (dropZone) {
+        dropZone.addEventListener('click', () => fileInput.click());
 
-    fileInput.addEventListener('change', handleFile);
+        fileInput.addEventListener('change', handleFile);
 
-    function handleFile(e) {
-        const file = e.target.files[0];
-        if (file) {
-            if (file.size > 2 * 1024 * 1024) {
-                alert("File is too large. Max 2MB.");
-                return;
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("File is too large. Max 2MB.");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    fileName.textContent = file.name;
+                    dropZone.classList.add('hidden');
+                    dropZone.style.display = 'none';
+                    filePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
             }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                fileName.textContent = file.name;
-                dropZone.classList.add('hidden');
-                dropZone.style.display = 'none';
-                filePreview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
         }
-    }
 
-    removeFileBtn.addEventListener('click', () => {
-        fileInput.value = '';
-        filePreview.classList.add('hidden');
-        dropZone.style.display = 'block';
-    });
+        removeFileBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            filePreview.classList.add('hidden');
+            dropZone.style.display = 'block';
+        });
+    }
 });
