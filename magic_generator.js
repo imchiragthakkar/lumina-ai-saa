@@ -147,74 +147,75 @@ async function handleAutoPilot() {
 
 // --- Core Logic ---
 
-topic = topic.trim();
-if (!topic) return;
+async function handleGenerate(topic) {
+    topic = topic.trim();
+    if (!topic) return;
 
-// 1. Add User Message
-addMessage(topic, 'user');
-topicInput.value = '';
+    // 1. Add User Message
+    addMessage(topic, 'user');
+    topicInput.value = '';
 
-// 2. Start Loading State
-const loadingId = addMessage(`Analyzing **${userProfile?.businessName || 'Brand'}** profile... 🧠`, 'ai');
+    // 2. Start Loading State
+    const loadingId = addMessage(`Analyzing **${userProfile?.businessName || 'Brand'}** profile... 🧠`, 'ai');
 
-try {
-    await new Promise(r => setTimeout(r, 800)); // Short thinking pause
+    try {
+        await new Promise(r => setTimeout(r, 800)); // Short thinking pause
 
-    let result;
+        let result;
 
-    // 3. GENERATE CONTENT
-    if (userProfile?.geminiApiKey) {
-        try {
-            // Update loading message instead of adding new one
-            updateMessage(loadingId, "Connecting to Gemini AI... 🚀", 'ai');
+        // 3. GENERATE CONTENT
+        if (userProfile?.geminiApiKey) {
+            try {
+                // Update loading message instead of adding new one
+                updateMessage(loadingId, "Connecting to Gemini AI... 🚀", 'ai');
 
-            // Validate Key Format Basic Check
-            if (!userProfile.geminiApiKey.startsWith('AIza')) {
-                throw new Error("Invalid API Key format (must start with AIza)");
+                // Validate Key Format Basic Check
+                if (!userProfile.geminiApiKey.startsWith('AIza')) {
+                    throw new Error("Invalid API Key format (must start with AIza)");
+                }
+
+                result = await AIService.generateContent(topic, userProfile);
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                const isRateLimit = error.message.includes('429');
+                const msg = isRateLimit
+                    ? "Server is busy (Rate Limit). Using simulation mode. 🚦"
+                    : `AI Error: ${error.message}. Using simulation mode. 🛠️`;
+
+                updateMessage(loadingId, msg, 'ai');
+                await new Promise(r => setTimeout(r, 1500)); // Let user read error
+                result = mockAI(topic);
             }
-
-            result = await AIService.generateContent(topic, userProfile);
-        } catch (error) {
-            console.error("Gemini Error:", error);
-            const isRateLimit = error.message.includes('429');
-            const msg = isRateLimit
-                ? "Server is busy (Rate Limit). Using simulation mode. 🚦"
-                : `AI Error: ${error.message}. Using simulation mode. 🛠️`;
-
-            updateMessage(loadingId, msg, 'ai');
-            await new Promise(r => setTimeout(r, 1500)); // Let user read error
+        } else {
+            // Fallback to Mock if no key
+            if (!window.hasShownKeyWarning) {
+                addMessage("⚠️ Tip: Add your free Gemini API Key in Settings for smarter, infinite generation!", 'ai');
+                window.hasShownKeyWarning = true;
+            }
             result = mockAI(topic);
         }
-    } else {
-        // Fallback to Mock if no key
-        if (!window.hasShownKeyWarning) {
-            addMessage("⚠️ Tip: Add your free Gemini API Key in Settings for smarter, infinite generation!", 'ai');
-            window.hasShownKeyWarning = true;
+
+        currentTopic = topic;
+        currentHeadline = result.headline;
+
+        // Change template
+        let newTemplate = currentTemplate;
+        while (newTemplate === currentTemplate) {
+            newTemplate = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
         }
-        result = mockAI(topic);
+        currentTemplate = newTemplate;
+
+        // 4. Success Output
+        removeMessage(loadingId);
+        addMessage(`Here is a personalized post for **${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
+
+        renderCanvas();
+
+    } catch (fatalError) {
+        console.error("Fatal Generation Error:", fatalError);
+        removeMessage(loadingId);
+        addMessage("❌ Something went wrong. Please try again.", 'ai');
     }
-
-    currentTopic = topic;
-    currentHeadline = result.headline;
-
-    // Change template
-    let newTemplate = currentTemplate;
-    while (newTemplate === currentTemplate) {
-        newTemplate = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
-    }
-    currentTemplate = newTemplate;
-
-    // 4. Success Output
-    removeMessage(loadingId);
-    addMessage(`Here is a personalized post for **${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
-
-    renderCanvas();
-
-} catch (fatalError) {
-    console.error("Fatal Generation Error:", fatalError);
-    removeMessage(loadingId);
-    addMessage("❌ Something went wrong. Please try again.", 'ai');
-}
 }
 
 // --- GEMINI API INTEGRATION ---
