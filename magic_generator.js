@@ -207,6 +207,16 @@ async function handleGenerate(topic) {
             result = mockAI(topic);
         }
 
+        // Normalize Keys (Handle Case Sensitivity/Empty from AI)
+        const h = result.headline || result.Headline || "";
+        const c = result.caption || result.Caption || "";
+        const ht = result.hashtags || result.Hashtags || "";
+
+        // Enforce valid string
+        result.headline = (h.trim().length > 0) ? h : `Update about ${topic}`;
+        result.caption = c;
+        result.hashtags = ht;
+
         currentTopic = topic;
         currentHeadline = result.headline;
 
