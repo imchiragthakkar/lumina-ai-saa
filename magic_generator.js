@@ -147,32 +147,42 @@ async function handleAutoPilot() {
 
 // --- Core Logic ---
 
-async function handleGenerate(topic) {
-    topic = topic.trim();
-    if (!topic) return;
+topic = topic.trim();
+if (!topic) return;
 
-    // 1. Add User Message
-    addMessage(topic, 'user');
-    topicInput.value = '';
+// 1. Add User Message
+addMessage(topic, 'user');
+topicInput.value = '';
 
-    const loadingId = addMessage(`Analyzing **${userProfile?.businessName || 'Brand'}** profile & drafting ideas... 🧠`, 'ai');
-    await new Promise(r => setTimeout(r, 1000));
+// 2. Start Loading State
+const loadingId = addMessage(`Analyzing **${userProfile?.businessName || 'Brand'}** profile... 🧠`, 'ai');
+
+try {
+    await new Promise(r => setTimeout(r, 800)); // Short thinking pause
 
     let result;
 
-    // 4. GENERATE CONTENT
+    // 3. GENERATE CONTENT
     if (userProfile?.geminiApiKey) {
         try {
-            addMessage("Connecting to Gemini AI... 🧠", 'ai');
+            // Update loading message instead of adding new one
+            updateMessage(loadingId, "Connecting to Gemini AI... 🚀", 'ai');
+
+            // Validate Key Format Basic Check
+            if (!userProfile.geminiApiKey.startsWith('AIza')) {
+                throw new Error("Invalid API Key format (must start with AIza)");
+            }
+
             result = await AIService.generateContent(topic, userProfile);
         } catch (error) {
             console.error("Gemini Error:", error);
             const isRateLimit = error.message.includes('429');
             const msg = isRateLimit
-                ? "Server is busy (Rate Limit). Using simulation mode for now. 🚦"
-                : "AI connection issue. Falling back to simulation. 🛠️";
+                ? "Server is busy (Rate Limit). Using simulation mode. 🚦"
+                : `AI Error: ${error.message}. Using simulation mode. 🛠️`;
 
-            addMessage(msg, 'ai');
+            updateMessage(loadingId, msg, 'ai');
+            await new Promise(r => setTimeout(r, 1500)); // Let user read error
             result = mockAI(topic);
         }
     } else {
@@ -194,10 +204,17 @@ async function handleGenerate(topic) {
     }
     currentTemplate = newTemplate;
 
+    // 4. Success Output
     removeMessage(loadingId);
     addMessage(`Here is a personalized post for **${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
 
     renderCanvas();
+
+} catch (fatalError) {
+    console.error("Fatal Generation Error:", fatalError);
+    removeMessage(loadingId);
+    addMessage("❌ Something went wrong. Please try again.", 'ai');
+}
 }
 
 // --- GEMINI API INTEGRATION ---
@@ -356,6 +373,14 @@ function addMessage(text, type) {
 function removeMessage(id) {
     const el = document.getElementById(id);
     if (el) el.remove();
+}
+
+function updateMessage(id, newText, type) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.className = `chat-bubble ${type}`;
+        el.innerHTML = newText.replace(/\n/g, '<br>');
+    }
 }
 
 function downloadImage() {
