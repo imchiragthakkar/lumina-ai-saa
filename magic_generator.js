@@ -234,13 +234,19 @@ async function generateWithGemini(topic, profile) {
 
     for (let i = 0; i < MAX_RETRIES; i++) {
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s Timeout
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: instructions }] }]
-                })
+                }),
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (response.status === 429 || response.status === 503) {
                 console.warn(`API Rate Limit (429) or Service Unavailable (503). Retrying in ${delay}ms...`);
@@ -259,12 +265,17 @@ async function generateWithGemini(topic, profile) {
             return JSON.parse(jsonStr);
 
         } catch (err) {
+            if (err.name === 'AbortError') {
+                throw new Error("Connection timed out (15s).");
+            }
             if (i === MAX_RETRIES - 1) throw err; // Throw on last fail
-            // Only retry network errors, not other logic errors unless handled above
-            if (err.message.includes('429') || err.message.includes('503')) {
-                // already waited
+
+            // Retry logic
+            const isRetryable = err.message.includes('429') || err.message.includes('503') || err.name === 'TypeError'; // TypeError handles network failures
+            if (isRetryable) {
+                // already waited or will wait
             } else {
-                throw err; // Don't retry validation or auth errors
+                throw err;
             }
         }
     }
