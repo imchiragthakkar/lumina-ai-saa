@@ -157,9 +157,26 @@ async function handleGenerate(topic) {
     const loadingId = addMessage('Thinking...', 'ai');
     await new Promise(r => setTimeout(r, 1000));
 
-    // 4. "AI" Generates Content
-    // Include Business Name in the prompt context if possible (Mock AI simulates this)
-    const result = mockAI(topic);
+    let result;
+
+    // 4. GENERATE CONTENT
+    if (userProfile?.geminiApiKey) {
+        try {
+            addMessage("Connecting to Gemini AI... 🧠", 'ai');
+            result = await generateWithGemini(topic, userProfile);
+        } catch (error) {
+            console.error("Gemini Error:", error);
+            addMessage("AI Error: " + error.message + ". Falling back to simulation.", 'ai');
+            result = mockAI(topic);
+        }
+    } else {
+        // Fallback to Mock if no key
+        if (!window.hasShownKeyWarning) {
+            addMessage("⚠️ Tip: Add your free Gemini API Key in Settings for smarter, infinite generation!", 'ai');
+            window.hasShownKeyWarning = true;
+        }
+        result = mockAI(topic);
+    }
 
     currentTopic = topic;
     currentHeadline = result.headline;
@@ -172,9 +189,57 @@ async function handleGenerate(topic) {
     currentTemplate = newTemplate;
 
     removeMessage(loadingId);
-    addMessage(`Here you go! A personalized post for ** ${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption} \n\n${result.hashtags} `, 'ai');
+    addMessage(`Here is a personalized post for **${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
 
     renderCanvas();
+}
+
+// --- GEMINI API INTEGRATION ---
+async function generateWithGemini(topic, profile) {
+    const apiKey = profile.geminiApiKey;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const brandContext = `
+        Business Name: ${profile.businessName || "Generic Brand"}
+        Industry: ${profile.industry || "General"}
+        Tone: ${profile.tone || "Professional"}
+    `;
+
+    const instructions = `
+        You are a social media expert. Create a post about "${topic}".
+        Context: ${brandContext}
+        
+        Return ONLY a raw JSON object (no markdown formatting) with this exact structure:
+        {
+            "headline": "Short punchy text for an image design (max 6 words)",
+            "caption": "Engaging caption for Instagram/LinkedIn with emojis",
+            "hashtags": "3-5 relevant hashtags"
+        }
+    `;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{ text: instructions }]
+            }]
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.candidates[0].content.parts[0].text;
+
+    // Clean potential markdown code blocks if the model adds them
+    const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    return JSON.parse(jsonStr);
 }
 
 function mockAI(topic) {
