@@ -269,10 +269,16 @@ function mockAI(topic) {
         };
     } else {
         // Generic Fallback
+        const genericHeadlines = ["Exciting News! ✨", "Fresh Update 🚀", "Did You Know? 💡", "Special Announcement 📢", "Trending Now 🔥"];
+        const randomHead = genericHeadlines[Math.floor(Math.random() * genericHeadlines.length)];
+
+        // Use topic if short enough, otherwise use a generic hook
+        const displayHeadline = topic.length < 40 ? topic : randomHead;
+
         return {
-            headline: topic.length < 25 ? topic : "Lumina Magic",
-            caption: `Engage your audience with this update from ${brand}.`,
-            hashtags: `#${brand.replace(/\s/g, '')} #Update #Viral`
+            headline: displayHeadline,
+            caption: `Here is a special update regarding ${topic} from ${brand}. We have some exciting things to share with you!`,
+            hashtags: `#${brand.replace(/\s/g, '')} #Trend #Viral`
         };
     }
 }
