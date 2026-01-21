@@ -220,16 +220,43 @@ async function handleGenerate(topic) {
         currentTopic = topic;
         currentHeadline = result.headline;
 
-        // Change template
-        let newTemplate = currentTemplate;
-        while (newTemplate === currentTemplate) {
-            newTemplate = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
-        }
-        currentTemplate = newTemplate;
-
         // 4. Success Output
         removeMessage(loadingId);
         addMessage(`Here is a personalized post for **${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
+
+        // --- 5. APPLY AI DESIGN ---
+        if (result.design) {
+            console.log("Applying AI Design:", result.design);
+
+            // Map AI Font Mood to actual fonts
+            let fontStack = '"Plus Jakarta Sans", sans-serif';
+            let fontWeight = 'bold';
+            let fontSize = '48px';
+
+            switch (result.design.font_mood) {
+                case 'classic': fontStack = '"Playfair Display", serif'; fontWeight = 'bold'; break;
+                case 'handwritten': fontStack = '"Caveat", cursive'; fontWeight = 'normal'; fontSize = '55px'; break;
+                case 'modern': fontStack = '"Plus Jakarta Sans", sans-serif'; fontWeight = '600'; break;
+                case 'bold': fontStack = '"Oswald", sans-serif'; fontWeight = '700'; fontSize = '55px'; break;
+            }
+
+            currentTemplate = {
+                id: 'ai_custom',
+                bg: result.design.background_color,
+                textColor: result.design.text_color,
+                accentColor: result.design.accent_color,
+                font: `${fontWeight} ${fontSize} ${fontStack}`,
+                textAlign: result.design.layout === 'hero' ? 'left' : (result.design.layout === 'bold' ? 'right' : 'center'),
+                layout: result.design.layout
+            };
+        } else {
+            // Fallback to random if no design provided
+            let newTemplate = currentTemplate;
+            while (newTemplate === currentTemplate) {
+                newTemplate = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
+            }
+            currentTemplate = newTemplate;
+        }
 
         renderCanvas();
 
@@ -253,7 +280,14 @@ function mockAI(topic) {
         return {
             headline: "Flash Sale Alert! ⚡",
             caption: `Don't miss out on biggest deals of the season at ${brand}. Shop now and save!`,
-            hashtags: "#Sale #Deals #LimitedTime"
+            hashtags: "#Sale #Deals #LimitedTime",
+            design: {
+                background_color: "#be185d",
+                text_color: "#ffffff",
+                accent_color: "#fbbf24",
+                font_mood: "bold",
+                layout: "bold"
+            }
         };
     } else if (t.includes('coffee') || t.includes('food') || t.includes('menu')) {
         return {
@@ -291,7 +325,14 @@ function mockAI(topic) {
         return {
             headline: displayHeadline,
             caption: `Here is a special update regarding ${topic} from ${brand}. We have some exciting things to share with you!`,
-            hashtags: `#${brand.replace(/\s/g, '')} #Trend #Viral`
+            hashtags: `#${brand.replace(/\s/g, '')} #Trend #Viral`,
+            design: {
+                background_color: "linear-gradient(135deg, #1e293b, #0f172a)",
+                text_color: "#e2e8f0",
+                accent_color: "#38bdf8",
+                font_mood: "modern",
+                layout: "center"
+            }
         };
     }
 }
