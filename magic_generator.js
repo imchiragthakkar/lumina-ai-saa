@@ -201,6 +201,12 @@ async function handleGenerate(topic) {
             result = mockAI(topic);
         }
 
+        // --- DEFENSIVE CHECK: Ensure result is never undefined ---
+        if (!result) {
+            console.warn("Unexpected: result is undefined after generation logic. Using final fallback.");
+            result = mockAI(topic);
+        }
+
         currentTopic = topic;
         currentHeadline = result.headline;
 
