@@ -1,4 +1,4 @@
-```javascript
+
 import { db, auth } from "./firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (docSnap.exists()) {
                     userProfile = docSnap.data();
                     console.log("Magic Generator: Loaded Profile", userProfile);
-                    
+
                     // Pre-load logo if available
                     if (userProfile.logoBase64) {
                         const img = new Image();
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     generateBtn.addEventListener('click', () => handleGenerate(topicInput.value));
-    
+
     topicInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleGenerate(topicInput.value);
     });
@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Auto Pilot Logic ---
 async function handleAutoPilot() {
     let prompt = "Monday Motivation"; // Default
-    
+
     // SMART PROMPT: Based on Industry
     if (userProfile && userProfile.industry) {
         const ind = userProfile.industry.toLowerCase();
-        const businessParams = userProfile.businessName ? ` for ${ userProfile.businessName }` : "";
-        
+        const businessParams = userProfile.businessName ? ` for ${userProfile.businessName}` : "";
+
         if (ind.includes('food') || ind.includes('restaurant')) {
             const foodPrompts = ["Daily Special Deal", "Fresh Ingredients Spotlight", "Dinner Invitation" + businessParams];
             prompt = foodPrompts[Math.floor(Math.random() * foodPrompts.length)];
@@ -135,12 +135,12 @@ async function handleAutoPilot() {
     // Typewriter effect
     topicInput.value = "";
     topicInput.focus();
-    
+
     for (let i = 0; i < prompt.length; i++) {
         topicInput.value += prompt[i];
         await new Promise(r => setTimeout(r, 20));
     }
-    
+
     handleGenerate(prompt);
 }
 
@@ -153,17 +153,17 @@ async function handleGenerate(topic) {
     // 1. Add User Message
     addMessage(topic, 'user');
     topicInput.value = '';
-    
+
     const loadingId = addMessage('Thinking...', 'ai');
     await new Promise(r => setTimeout(r, 1000));
-    
+
     // 4. "AI" Generates Content
     // Include Business Name in the prompt context if possible (Mock AI simulates this)
     const result = mockAI(topic);
-    
+
     currentTopic = topic;
     currentHeadline = result.headline;
-    
+
     // Change template
     let newTemplate = currentTemplate;
     while (newTemplate === currentTemplate) {
@@ -172,8 +172,8 @@ async function handleGenerate(topic) {
     currentTemplate = newTemplate;
 
     removeMessage(loadingId);
-    addMessage(`Here you go! A personalized post for ** ${ userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${ result.caption } \n\n${ result.hashtags } `, 'ai');
-    
+    addMessage(`Here you go! A personalized post for ** ${userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${result.caption} \n\n${result.hashtags} `, 'ai');
+
     renderCanvas();
 }
 
@@ -181,34 +181,34 @@ function mockAI(topic) {
     // Smart mocking based on inputs
     const t = topic.toLowerCase();
     const brand = userProfile?.businessName || "us";
-    
+
     // Simple robust keyword matching
     if (t.includes('sale') || t.includes('offer') || t.includes('deal')) {
         return {
             headline: "Flash Sale Alert! ⚡",
             caption: `Don't miss out on biggest deals of the season at ${brand}. Shop now and save!`,
-hashtags: "#Sale #Deals #LimitedTime"
+            hashtags: "#Sale #Deals #LimitedTime"
         };
     } else if (t.includes('coffee') || t.includes('food') || t.includes('menu')) {
-    return {
-        headline: "Taste the Magic ☕",
-        caption: `Fresh flavors waiting for you at ${brand}. Come visit us today!`,
-        hashtags: "#Foodie #Yum #Fresh"
-    };
-} else if (t.includes('launch') || t.includes('new') || t.includes('arrival')) {
-    return {
-        headline: "Just Arrived! ✨",
-        caption: `Check out what's new at ${brand}. You're going to love this.`,
-        hashtags: "#New #Launch #Exciting"
-    };
-} else {
-    // Generic Fallback
-    return {
-        headline: topic.length < 25 ? topic : "Lumina Magic",
-        caption: `Engage your audience with this update from ${brand}.`,
-        hashtags: `#${brand.replace(/\s/g, '')} #Update #Viral`
-    };
-}
+        return {
+            headline: "Taste the Magic ☕",
+            caption: `Fresh flavors waiting for you at ${brand}. Come visit us today!`,
+            hashtags: "#Foodie #Yum #Fresh"
+        };
+    } else if (t.includes('launch') || t.includes('new') || t.includes('arrival')) {
+        return {
+            headline: "Just Arrived! ✨",
+            caption: `Check out what's new at ${brand}. You're going to love this.`,
+            hashtags: "#New #Launch #Exciting"
+        };
+    } else {
+        // Generic Fallback
+        return {
+            headline: topic.length < 25 ? topic : "Lumina Magic",
+            caption: `Engage your audience with this update from ${brand}.`,
+            hashtags: `#${brand.replace(/\s/g, '')} #Update #Viral`
+        };
+    }
 }
 
 // --- Canvas Rendering ---
