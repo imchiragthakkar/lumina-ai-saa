@@ -154,7 +154,7 @@ async function handleGenerate(topic) {
     addMessage(topic, 'user');
     topicInput.value = '';
 
-    const loadingId = addMessage('Thinking...', 'ai');
+    const loadingId = addMessage(`Analyzing **${userProfile?.businessName || 'Brand'}** profile & drafting ideas... 🧠`, 'ai');
     await new Promise(r => setTimeout(r, 1000));
 
     let result;
@@ -202,18 +202,25 @@ async function generateWithGemini(topic, profile) {
     const brandContext = `
         Business Name: ${profile.businessName || "Generic Brand"}
         Industry: ${profile.industry || "General"}
+        Business Description: ${profile.description || "No description provided"}
         Tone: ${profile.tone || "Professional"}
     `;
 
     const instructions = `
-        You are a social media expert. Create a post about "${topic}".
-        Context: ${brandContext}
+        Act as a senior social media manager for the business described above.
         
-        Return ONLY a raw JSON object (no markdown formatting) with this exact structure:
+        TASK: Create an engaging Instagram post about: "${topic}".
+        
+        STRATEGY:
+        1. Analyze the Business Description to understand the brand's unique value.
+        2. Connect the topic ("${topic}") to the brand's products/services.
+        3. Use the specified Tone.
+        
+        OUTPUT format (Raw JSON only):
         {
-            "headline": "Short punchy text for an image design (max 6 words)",
-            "caption": "Engaging caption for Instagram/LinkedIn with emojis",
-            "hashtags": "3-5 relevant hashtags"
+            "headline": "Creative, short text for the image design (max 6 words)",
+            "caption": "Engaging caption incorporating the business context and topic. Use emojis.",
+            "hashtags": "5-7 relevant hashtags mixed (niche + broad)"
         }
     `;
 
