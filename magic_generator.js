@@ -177,13 +177,19 @@ async function handleGenerate(topic) {
                 result = await AIService.generateContent(topic, userProfile);
             } catch (error) {
                 console.error("Gemini Error:", error);
-                const isRateLimit = error.message.includes('429');
+
+                // Safe error message extraction
+                const errText = (error?.message || String(error)).toLowerCase();
+                const isRateLimit = errText.includes('429');
+
                 const msg = isRateLimit
                     ? "Server is busy (Rate Limit). Using simulation mode. 🚦"
-                    : `AI Error: ${error.message}. Using simulation mode. 🛠️`;
+                    : `AI connection issue (${errText.substring(0, 30)}...). Using simulation mode. 🛠️`;
 
                 updateMessage(loadingId, msg, 'ai');
-                await new Promise(r => setTimeout(r, 1500)); // Let user read error
+
+                // Wait briefly then force fallback
+                await new Promise(r => setTimeout(r, 1500));
                 result = mockAI(topic);
             }
         } else {
@@ -214,7 +220,7 @@ async function handleGenerate(topic) {
     } catch (fatalError) {
         console.error("Fatal Generation Error:", fatalError);
         removeMessage(loadingId);
-        addMessage("❌ Something went wrong. Please try again.", 'ai');
+        addMessage(`❌ Something went wrong: ${(fatalError?.message || String(fatalError))}`, 'ai');
     }
 }
 
