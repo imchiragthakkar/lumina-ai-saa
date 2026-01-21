@@ -81,6 +81,10 @@ async function loadUserSettings(uid) {
                 if (data.colors.text) document.getElementById('brandText').value = data.colors.text;
             }
 
+            // Load API Keys
+            if (data.geminiApiKey) document.getElementById('geminiKey').value = data.geminiApiKey;
+            if (data.openaiApiKey) document.getElementById('openaiKey').value = data.openaiApiKey;
+
             // Load logo preview if exists (assuming base64 for MVP)
             if (data.logoBase64) {
                 const logoPreview = document.getElementById('logoPreview');
@@ -134,6 +138,12 @@ window.saveSettings = async function () {
         }
 
         // Save to Firestore (merge: true updates only provided fields)
+        const geminiKey = document.getElementById('geminiKey')?.value;
+        const openaiKey = document.getElementById('openaiKey')?.value;
+
+        if (geminiKey !== undefined) brandUpdates.geminiApiKey = geminiKey;
+        if (openaiKey !== undefined) brandUpdates.openaiApiKey = openaiKey;
+
         await setDoc(doc(db, "users", user.uid), brandUpdates, { merge: true });
 
         // Success Feedback
@@ -165,4 +175,14 @@ function convertToBase64(file) {
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
     });
+}
+
+// Helper: Toggle Password Visibility
+window.toggleVisibility = function (id) {
+    const el = document.getElementById(id);
+    if (el.type === "password") {
+        el.type = "text";
+    } else {
+        el.type = "password";
+    }
 }

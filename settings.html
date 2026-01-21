@@ -57,6 +57,7 @@
                     <button class="tab-btn active" data-tab="profile">Profile</button>
                     <button class="tab-btn" data-tab="brand">Brand Details</button>
                     <button class="tab-btn" data-tab="billing">Subscription</button>
+                    <button class="tab-btn" data-tab="integrations">Integrations</button>
                 </div>
 
                 <!-- Profile Tab -->
@@ -203,6 +204,45 @@
                             </div>
                             <button class="btn-text-sm">Edit</button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Integrations Tab -->
+                <div class="tab-content" id="integrations">
+                    <div class="settings-card">
+                        <h3>AI Configurations</h3>
+                        <p class="text-muted" style="margin-bottom: 1.5rem;">Connect your own AI keys to unlock advanced
+                            generation capabilities without limits.</p>
+
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>Google Gemini API Key <span class="badge-new">Recommended</span></label>
+                                <div class="input-with-icon">
+                                    <i class="fa-brands fa-google input-icon"></i>
+                                    <input type="password" id="geminiKey" placeholder="AIzA..." autocomplete="off">
+                                    <button type="button" class="btn-text-sm" onclick="toggleVisibility('geminiKey')"><i
+                                            class="fa-solid fa-eye"></i></button>
+                                </div>
+                                <p class="help-text">
+                                    Don't have a key?
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                                        class="link-primary">
+                                        Get one for free at Google AI Studio <i
+                                            class="fa-solid fa-external-link-alt"></i>
+                                    </a>
+                                </p>
+                            </div>
+
+                            <div class="form-group">
+                                <label>OpenAI API Key (Optional)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-robot input-icon"></i>
+                                    <input type="password" id="openaiKey" placeholder="sk-..." autocomplete="off">
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-primary" onclick="saveSettings()">Save API Keys</button>
+                        </form>
                     </div>
                 </div>
 
