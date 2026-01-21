@@ -243,12 +243,39 @@ async function handleGenerate(topic) {
             currentTemplate = {
                 id: 'ai_custom',
                 bg: result.design.background_color,
+                bgImagePrompt: result.design.image_prompt, // Store URL logic later
+                overlayOpacity: result.design.overlay_opacity || 0.4,
                 textColor: result.design.text_color,
                 accentColor: result.design.accent_color,
                 font: `${fontWeight} ${fontSize} ${fontStack}`,
                 textAlign: result.design.layout === 'hero' ? 'left' : (result.design.layout === 'bold' ? 'right' : 'center'),
                 layout: result.design.layout
             };
+
+            // --- 6. FETCH BACKGROUND IMAGE ---
+            if (result.design.image_prompt) {
+                updateMessage(loadingId, "Generating AI Visuals... 🎨", 'ai');
+                const safePrompt = encodeURIComponent(result.design.image_prompt);
+                const imageUrl = `https://image.pollinations.ai/prompt/${safePrompt}?width=1080&height=1080&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
+
+                console.log("Fetching Image:", imageUrl);
+
+                // Preload Image
+                const bgImg = new Image();
+                bgImg.crossOrigin = "Anonymous";
+                bgImg.src = imageUrl;
+
+                bgImg.onload = () => {
+                    currentTemplate.bgImageObj = bgImg; // Store loaded image
+                    renderCanvas();
+                    addMessage("✨ Enhanced the post with a custom AI-generated background!", 'ai');
+                };
+
+                bgImg.onerror = () => {
+                    console.warn("Image gen failed, falling back to colors");
+                    renderCanvas(); // Render without image
+                };
+            }
         } else {
             // Fallback to random if no design provided
             let newTemplate = currentTemplate;
@@ -342,18 +369,46 @@ function renderCanvas() {
     if (!ctx) return;
 
     // Background
-    if (currentTemplate.bg.startsWith('linear-gradient')) {
-        const grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-        grad.addColorStop(0, '#6366f1');
-        grad.addColorStop(1, '#ec4899');
-        ctx.fillStyle = grad;
-    } else {
-        ctx.fillStyle = currentTemplate.bg;
-    }
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (currentTemplate.bgImageObj) {
+        // Draw AI Generated Image
+        try {
+            // Draw image responsibly
+            const ratio = Math.max(canvas.width / currentTemplate.bgImageObj.width, canvas.height / currentTemplate.bgImageObj.height);
+            const centerShift_x = (canvas.width - currentTemplate.bgImageObj.width * ratio) / 2;
+            const centerShift_y = (canvas.height - currentTemplate.bgImageObj.height * ratio) / 2;
 
-    // Text Config
-    ctx.fillStyle = currentTemplate.textColor;
+            ctx.drawImage(currentTemplate.bgImageObj, 0, 0, currentTemplate.bgImageObj.width, currentTemplate.bgImageObj.height,
+                centerShift_x, centerShift_y, currentTemplate.bgImageObj.width * ratio, currentTemplate.bgImageObj.height * ratio);
+
+            // Draw Overlay for text readability
+            ctx.fillStyle = `rgba(0, 0, 0, ${currentTemplate.overlayOpacity || 0.4})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        } catch (e) {
+            console.error("Canvas Image Error", e);
+            ctx.fillStyle = currentTemplate.bg || '#333';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+    else if (currentTemplate.bg && currentTemplate.bg.startsWith('linear-gradient')) {
+        const grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+        grad.addColorStop(0, '#6366f1'); // Fallback gradient stops if parsing fails (simplified)
+        grad.addColorStop(1, '#ec4899');
+        // Ideally parse the string, but for now simple fallback or direct fill
+        // For robustness in this phase, let's use a standard gradient if string detected
+        // or improve this later. For now, we will assume standard colors or simple handling.
+        ctx.fillStyle = '#1e293b'; // Fallback for complex gradients in canvas without parser
+        // Actually, let's just use the fallback color if gradient parsing is too complex for this snippet
+        // or check for hex.
+        // Better:
+        ctx.fillStyle = '#0f172a'; // Safe dark default
+    } else {
+        ctx.fillStyle = currentTemplate.bg || '#1e293b';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Ensure text color matches overlay (white usually better on dark overlay)
+    ctx.fillStyle = currentTemplate.bgImageObj ? '#ffffff' : currentTemplate.textColor;
     ctx.font = currentTemplate.font;
     ctx.textAlign = currentTemplate.textAlign;
     ctx.textBaseline = 'middle';

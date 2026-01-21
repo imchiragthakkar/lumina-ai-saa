@@ -42,9 +42,11 @@ export const AIService = {
                 "caption": "Engaging caption incorporating the business context and topic. Use emojis.",
                 "hashtags": "5-7 relevant hashtags mixed (niche + broad)",
                 "design": {
+                    "image_prompt": "A detailed, photorealistic English description of a background image for this post. Mention lighting, style, and objects. Do not include text in the image description.",
+                    "overlay_opacity": "Number between 0.2 and 0.6 (e.g. 0.4) for text readability overlay",
                     "visual_style": "One of: 'minimal', 'bold', 'luxury', 'playful', 'nature', 'tech'",
-                    "background_color": "Hex code (e.g., #1e293b) or CSS linear-gradient string (e.g. 'linear-gradient(135deg, #1e293b, #0f172a)')",
-                    "text_color": "Hex code for high contrast visibility",
+                    "background_color": "Fallback Hex code",
+                    "text_color": "Hex code (usually #ffffff if using image background)",
                     "accent_color": "Hex code for emphasis",
                     "font_mood": "One of: 'modern', 'classic', 'handwritten', 'bold'",
                     "layout": "One of: 'center', 'hero', 'clean', 'bold'"
