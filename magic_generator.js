@@ -270,10 +270,23 @@ function mockAI(topic) {
     } else {
         // Generic Fallback
         const genericHeadlines = ["Exciting News! ✨", "Fresh Update 🚀", "Did You Know? 💡", "Special Announcement 📢", "Trending Now 🔥"];
-        const randomHead = genericHeadlines[Math.floor(Math.random() * genericHeadlines.length)];
 
-        // Use topic if short enough, otherwise use a generic hook
-        const displayHeadline = topic.length < 40 ? topic : randomHead;
+        // Command word filter (prevent "create post for..." appearing as headline)
+        const commandWords = ['create', 'make', 'generate', 'post', 'for', 'instagram', 'write', 'about'];
+        const isCommand = commandWords.some(w => t.startsWith(w));
+
+        // Keyword Extraction (e.g., "Diwali" from "create diwali post")
+        let displayHeadline = "";
+
+        if (t.includes('diwali') || t.includes('festival') || t.includes('christmas') || t.includes('holiday')) {
+            displayHeadline = "Happy Holidays! ✨";
+            if (t.includes('diwali')) displayHeadline = "Happy Diwali! 🪔";
+            if (t.includes('christmas')) displayHeadline = "Merry Christmas! 🎄";
+        } else if (!isCommand && t.length < 40) {
+            displayHeadline = topic;
+        } else {
+            displayHeadline = genericHeadlines[Math.floor(Math.random() * genericHeadlines.length)];
+        }
 
         return {
             headline: displayHeadline,
