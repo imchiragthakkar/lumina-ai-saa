@@ -166,7 +166,12 @@ async function handleGenerate(topic) {
             result = await generateWithGemini(topic, userProfile);
         } catch (error) {
             console.error("Gemini Error:", error);
-            addMessage("AI Error: " + error.message + ". Falling back to simulation.", 'ai');
+            const isRateLimit = error.message.includes('429');
+            const msg = isRateLimit
+                ? "Server is busy (Rate Limit). Using simulation mode for now. 🚦"
+                : "AI connection issue. Falling back to simulation. 🛠️";
+
+            addMessage(msg, 'ai');
             result = mockAI(topic);
         }
     } else {
@@ -224,29 +229,45 @@ async function generateWithGemini(topic, profile) {
         }
     `;
 
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{ text: instructions }]
-            }]
-        })
-    });
+    const MAX_RETRIES = 3;
+    let delay = 1000;
 
-    if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+    for (let i = 0; i < MAX_RETRIES; i++) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: instructions }] }]
+                })
+            });
+
+            if (response.status === 429 || response.status === 503) {
+                console.warn(`API Rate Limit (429) or Service Unavailable (503). Retrying in ${delay}ms...`);
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2; // Exponential backoff
+                continue;
+            }
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(jsonStr);
+
+        } catch (err) {
+            if (i === MAX_RETRIES - 1) throw err; // Throw on last fail
+            // Only retry network errors, not other logic errors unless handled above
+            if (err.message.includes('429') || err.message.includes('503')) {
+                // already waited
+            } else {
+                throw err; // Don't retry validation or auth errors
+            }
+        }
     }
-
-    const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
-
-    // Clean potential markdown code blocks if the model adds them
-    const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    return JSON.parse(jsonStr);
 }
 
 function mockAI(topic) {
