@@ -164,40 +164,39 @@ async function handleGenerate(topic) {
         let result;
 
         // 3. GENERATE CONTENT
-        if (userProfile?.geminiApiKey) {
-            try {
-                // Update loading message instead of adding new one
-                updateMessage(loadingId, "Connecting to Gemini AI... 🚀", 'ai');
+        // Always try AI first (AIService will handle key fallback)
+        try {
+            // Update loading message
+            updateMessage(loadingId, "Connecting to Gemini AI... 🚀", 'ai');
 
-                // Validate Key Format Basic Check
-                if (!userProfile.geminiApiKey.startsWith('AIza')) {
-                    throw new Error("Invalid API Key format (must start with AIza)");
+            // Optional: Check if we have *any* key before request to avoid 400s, 
+            // but AIService checks this now.
+
+            result = await AIService.generateContent(topic, userProfile);
+
+        } catch (error) {
+            console.error("Gemini Error:", error);
+
+            // Safe error message extraction
+            const errText = (error?.message || String(error)).toLowerCase();
+            const isRateLimit = errText.includes('429');
+            const isMissingKey = errText.includes('api key missing');
+
+            let msg = `AI connection issue (${errText.substring(0, 30)}...). Using simulation mode. 🛠️`;
+
+            if (isRateLimit) msg = "Server is busy (Rate Limit). Using simulation mode. 🚦";
+            if (isMissingKey) {
+                msg = "No API Key found. Using simulation mode. (Check Settings or Source)";
+                if (!window.hasShownKeyWarning) {
+                    addMessage("⚠️ Tip: Add your API Key in Settings or source code for infinite generation!", 'ai');
+                    window.hasShownKeyWarning = true;
                 }
-
-                result = await AIService.generateContent(topic, userProfile);
-            } catch (error) {
-                console.error("Gemini Error:", error);
-
-                // Safe error message extraction
-                const errText = (error?.message || String(error)).toLowerCase();
-                const isRateLimit = errText.includes('429');
-
-                const msg = isRateLimit
-                    ? "Server is busy (Rate Limit). Using simulation mode. 🚦"
-                    : `AI connection issue (${errText.substring(0, 30)}...). Using simulation mode. 🛠️`;
-
-                updateMessage(loadingId, msg, 'ai');
-
-                // Wait briefly then force fallback
-                await new Promise(r => setTimeout(r, 1500));
-                result = mockAI(topic);
             }
-        } else {
-            // Fallback to Mock if no key
-            if (!window.hasShownKeyWarning) {
-                addMessage("⚠️ Tip: Add your free Gemini API Key in Settings for smarter, infinite generation!", 'ai');
-                window.hasShownKeyWarning = true;
-            }
+
+            updateMessage(loadingId, msg, 'ai');
+
+            // Wait briefly then force fallback
+            await new Promise(r => setTimeout(r, 1500));
             result = mockAI(topic);
         }
 

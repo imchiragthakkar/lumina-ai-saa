@@ -4,6 +4,8 @@
  * Handles interactions with Google Gemini API
  */
 
+const SYSTEM_API_KEY = ""; // ⚠️ REPLACE THIS with your actual request-level API Key if not using User Settings
+
 export const AIService = {
     /**
      * Generate content using Google Gemini
@@ -12,11 +14,11 @@ export const AIService = {
      * @returns {Promise<object>} - JSON object with headline, caption, hashtags
      */
     async generateContent(topic, profile) {
-        if (!profile.geminiApiKey) {
-            throw new Error("API Key missing");
-        }
+        const apiKey = profile.geminiApiKey || SYSTEM_API_KEY;
 
-        const apiKey = profile.geminiApiKey;
+        if (!apiKey) {
+            throw new Error("API Key missing. Please add it in Settings or configure SYSTEM_API_KEY in ai-service.js");
+        }
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         const brandContext = `
