@@ -1,4 +1,7 @@
+```javascript
 import { db, auth } from "./firebase-config.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // --- Configuration & Templates ---
 const TEMPLATES = [
@@ -44,6 +47,8 @@ const TEMPLATES = [
 let currentTopic = "";
 let currentHeadline = "Welcome to Lumina";
 let currentTemplate = TEMPLATES[0];
+let userProfile = null;
+let logoImage = null; // Image object for canvas
 
 // --- DOM Elements ---
 const chatContainer = document.getElementById('chatContainer');
@@ -55,15 +60,40 @@ const ctx = canvas.getContext('2d');
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Ensure fonts are loaded before first render
+    // 1. Auth & Data Fetching
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                const docRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    userProfile = docSnap.data();
+                    console.log("Magic Generator: Loaded Profile", userProfile);
+                    
+                    // Pre-load logo if available
+                    if (userProfile.logoBase64) {
+                        const img = new Image();
+                        img.src = userProfile.logoBase64;
+                        img.onload = () => {
+                            logoImage = img;
+                            renderCanvas(); // Re-render with logo
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading profile:", err);
+            }
+        }
+    });
+
+    // 2. Ensure fonts are loaded
     document.fonts.ready.then(() => {
-        console.log("Fonts loaded, rendering initial canvas...");
         renderCanvas();
     });
 
     // Event Listeners
     generateBtn.addEventListener('click', () => handleGenerate(topicInput.value));
-
+    
     topicInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleGenerate(topicInput.value);
     });
@@ -80,29 +110,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Auto Pilot Logic ---
 async function handleAutoPilot() {
-    const prompts = [
-        "Summer Sale Announcement",
-        "Monday Morning Motivation",
-        "New Product Launch Teaser",
-        "Customer Appreciation Post",
-        "Healthy Lifestyle Tip",
-        "Grand Opening Event",
-        "Behind the Scenes Look"
-    ];
-
-    const randomTopic = prompts[Math.floor(Math.random() * prompts.length)];
-
-    // Typewriter effect for input
-    topicInput.value = "";
-    topicInput.focus();
-
-    for (let i = 0; i < randomTopic.length; i++) {
-        topicInput.value += randomTopic[i];
-        await new Promise(r => setTimeout(r, 30)); // Typing speed
+    let prompt = "Monday Motivation"; // Default
+    
+    // SMART PROMPT: Based on Industry
+    if (userProfile && userProfile.industry) {
+        const ind = userProfile.industry.toLowerCase();
+        const businessParams = userProfile.businessName ? ` for ${ userProfile.businessName }` : "";
+        
+        if (ind.includes('food') || ind.includes('restaurant')) {
+            const foodPrompts = ["Daily Special Deal", "Fresh Ingredients Spotlight", "Dinner Invitation" + businessParams];
+            prompt = foodPrompts[Math.floor(Math.random() * foodPrompts.length)];
+        } else if (ind.includes('tech') || ind.includes('software')) {
+            const techPrompts = ["New Feature Announcement", "Tech Tip of the Day", "Upgrade Alert" + businessParams];
+            prompt = techPrompts[Math.floor(Math.random() * techPrompts.length)];
+        } else if (ind.includes('fit') || ind.includes('gym')) {
+            const fitPrompts = ["Workout Challenge", "Healthy Eating Tip", "Member Spotlight" + businessParams];
+            prompt = fitPrompts[Math.floor(Math.random() * fitPrompts.length)];
+        } else if (ind.includes('retail') || ind.includes('shop')) {
+            const shopPrompts = ["New Arrival Alert", "Limited Time Sale", "Staff Pick" + businessParams];
+            prompt = shopPrompts[Math.floor(Math.random() * shopPrompts.length)];
+        }
     }
 
-    // Trigger generation
-    handleGenerate(randomTopic);
+    // Typewriter effect
+    topicInput.value = "";
+    topicInput.focus();
+    
+    for (let i = 0; i < prompt.length; i++) {
+        topicInput.value += prompt[i];
+        await new Promise(r => setTimeout(r, 20));
+    }
+    
+    handleGenerate(prompt);
 }
 
 // --- Core Logic ---
@@ -114,66 +153,62 @@ async function handleGenerate(topic) {
     // 1. Add User Message
     addMessage(topic, 'user');
     topicInput.value = '';
-
-    // 2. Show Loading
+    
     const loadingId = addMessage('Thinking...', 'ai');
-
-    // 3. Simulate AI Delay
-    await new Promise(r => setTimeout(r, 1200));
-
-    // 4. "AI" Generates Content (Mock)
+    await new Promise(r => setTimeout(r, 1000));
+    
+    // 4. "AI" Generates Content
+    // Include Business Name in the prompt context if possible (Mock AI simulates this)
     const result = mockAI(topic);
+    
     currentTopic = topic;
     currentHeadline = result.headline;
-    // Pick random template that ISN'T the current one
+    
+    // Change template
     let newTemplate = currentTemplate;
     while (newTemplate === currentTemplate) {
         newTemplate = TEMPLATES[Math.floor(Math.random() * TEMPLATES.length)];
     }
     currentTemplate = newTemplate;
 
-    // 5. Update UI
     removeMessage(loadingId);
-    addMessage(`Here you go! I created a design for "**${topic}**".\n\n${result.caption}\n\n${result.hashtags}`, 'ai');
-
-    // 6. Update Canvas
+    addMessage(`Here you go! A personalized post for ** ${ userProfile?.businessName || 'your brand'}** regarding "**${topic}**".\n\n${ result.caption } \n\n${ result.hashtags } `, 'ai');
+    
     renderCanvas();
 }
 
 function mockAI(topic) {
+    // Smart mocking based on inputs
     const t = topic.toLowerCase();
-
-    if (t.includes('sale') || t.includes('offer')) {
+    const brand = userProfile?.businessName || "us";
+    
+    // Simple robust keyword matching
+    if (t.includes('sale') || t.includes('offer') || t.includes('deal')) {
         return {
             headline: "Flash Sale Alert! ⚡",
-            caption: "Don't miss out on our biggest deals of the season. Shop now and save big.",
-            hashtags: "#Sale #Deals #LimitedTime"
+            caption: `Don't miss out on biggest deals of the season at ${brand}. Shop now and save!`,
+hashtags: "#Sale #Deals #LimitedTime"
         };
-    } else if (t.includes('coffee') || t.includes('food')) {
-        return {
-            headline: "Taste the Magic ☕",
-            caption: "Start your day right with our premium blends. Freshly brewed just for you.",
-            hashtags: "#CoffeeLover #MorningVibes #Fresh"
-        };
-    } else if (t.includes('motivation') || t.includes('monday')) {
-        return {
-            headline: "Dream Big. Start Now.",
-            caption: "The future belongs to those who believe in the beauty of their dreams.",
-            hashtags: "#MondayMotivation #Inspiration #Goals"
-        };
-    } else if (t.includes('launch') || t.includes('new')) {
-        return {
-            headline: "Something New is Here!",
-            caption: "We've been working on this for months. Can't wait for you to see it.",
-            hashtags: "#NewArrival #Launch #Exciting"
-        };
-    } else {
-        return {
-            headline: topic.length < 20 ? topic : "Lumina AI Magic",
-            caption: `Here is some amazing content about ${topic}. Engage your audience with this insight!`,
-            hashtags: `#${topic.replace(/\s/g, '')} #LuminaAI #Viral`
-        };
-    }
+    } else if (t.includes('coffee') || t.includes('food') || t.includes('menu')) {
+    return {
+        headline: "Taste the Magic ☕",
+        caption: `Fresh flavors waiting for you at ${brand}. Come visit us today!`,
+        hashtags: "#Foodie #Yum #Fresh"
+    };
+} else if (t.includes('launch') || t.includes('new') || t.includes('arrival')) {
+    return {
+        headline: "Just Arrived! ✨",
+        caption: `Check out what's new at ${brand}. You're going to love this.`,
+        hashtags: "#New #Launch #Exciting"
+    };
+} else {
+    // Generic Fallback
+    return {
+        headline: topic.length < 25 ? topic : "Lumina Magic",
+        caption: `Engage your audience with this update from ${brand}.`,
+        hashtags: `#${brand.replace(/\s/g, '')} #Update #Viral`
+    };
+}
 }
 
 // --- Canvas Rendering ---
@@ -189,7 +224,6 @@ function renderCanvas() {
     } else {
         ctx.fillStyle = currentTemplate.bg;
     }
-
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Text Config
@@ -198,26 +232,40 @@ function renderCanvas() {
     ctx.textAlign = currentTemplate.textAlign;
     ctx.textBaseline = 'middle';
 
-    // Draw Headline (Simple wrap)
+    // Headline
     const x = currentTemplate.textAlign === 'center' ? canvas.width / 2 :
         currentTemplate.textAlign === 'right' ? canvas.width - 100 : 100;
-
     const y = canvas.height / 2;
 
-    // Add Shadow for readability
     ctx.shadowColor = "rgba(0,0,0,0.3)";
     ctx.shadowBlur = 10;
-
     wrapText(ctx, currentHeadline, x, y, 900, 70);
-
-    // Reset Shadow
     ctx.shadowBlur = 0;
 
-    // Draw "Watermark" or Brand Name
-    ctx.font = '30px "Plus Jakarta Sans"';
-    ctx.fillStyle = currentTemplate.accentColor;
-    ctx.textAlign = 'center';
-    ctx.fillText('@lumina.ai', canvas.width / 2, canvas.height - 80);
+    // --- PERSONALIZATION LAYER ---
+
+    if (logoImage) {
+        // Draw Logo (Bottom Center)
+        const logoWidth = 150;
+        const scale = logoWidth / logoImage.width;
+        const logoHeight = logoImage.height * scale;
+
+        // Draw white circle background for logo contrast
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height - 80, 60, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.drawImage(logoImage, (canvas.width / 2) - (logoWidth / 2), canvas.height - 120, logoWidth, logoHeight);
+    } else {
+        // Fallback: Text Watermark
+        ctx.font = '30px "Plus Jakarta Sans"';
+        ctx.fillStyle = currentTemplate.accentColor;
+        ctx.textAlign = 'center';
+        const watermarkText = userProfile?.businessName ? `@${userProfile.businessName}` : '@lumina.ai';
+        ctx.fillText(watermarkText, canvas.width / 2, canvas.height - 80);
+    }
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
