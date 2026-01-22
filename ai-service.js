@@ -44,7 +44,7 @@ export const AIService = {
                 "caption": "Engaging caption incorporating the business context and topic. Use emojis.",
                 "hashtags": "5-7 relevant hashtags mixed (niche + broad)",
                 "design": {
-                    "image_prompt": "A detailed, photorealistic English description of a background image. CRITICAL: It MUST visually combine the Industry (e.g., specific products/setting), the Brand Tone, and the Topic. Do not use text.",
+                    "image_prompt": "A detailed, photorealistic English description of a background image. CRITICAL: It MUST visually combine the Industry, Brand Tone, and Topic. IMPORTANT: Describe a scene with 'Negative Space' (empty area like sky, wall, or floor) specifically designed to place text naturally without covering important details.",
                     "composition": "One of: 'centered', 'hero-bottom', 'minimal-top', 'magazine-layout'",
                     "overlay_style": "One of: 'gradient-bottom', 'vignette', 'solid-dim', 'glass'",
                     "image_filter": "One of: 'none', 'sepia', 'warm', 'cool', 'muted'",
