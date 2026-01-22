@@ -76,10 +76,13 @@ export const AIService = {
                 clearTimeout(timeoutId);
 
                 if (response.status === 429 || response.status === 503) {
-                    console.warn(`API Rate Limit (429) or Service Unavailable (503). Retrying in ${delay}ms...`);
-                    await new Promise(r => setTimeout(r, delay));
+                    const jitter = Math.random() * 1000;
+                    const waitTime = delay + jitter;
+                    console.warn(`API Rate Limit (${response.status}). Retrying in ${Math.floor(waitTime)}ms...`);
+
+                    await new Promise(r => setTimeout(r, waitTime));
                     delay *= 2; // Exponential backoff
-                    continue;
+                    continue; // Correctly retry
                 }
 
                 if (!response.ok) {
@@ -100,13 +103,20 @@ export const AIService = {
                 if (err.name === 'AbortError') {
                     throw new Error("Connection timed out (15s).");
                 }
-                if (i === MAX_RETRIES - 1) throw err; // Throw on last fail
 
-                // Retry logic
+                // Don't retry if it's the last attempt
+                if (i === MAX_RETRIES - 1) throw err;
+
+                // Check for retryable errors (Network/RateLimit)
                 const isRetryable = err.message.includes('429') || err.message.includes('503') || err.name === 'TypeError';
+
                 if (isRetryable) {
-                    console.warn(`Attempt ${i + 1} failed: ${err.message}. Retrying...`);
-                    // already waited or will wait
+                    const jitter = Math.random() * 1000;
+                    const waitTime = delay + jitter;
+                    console.warn(`Attempt ${i + 1} failed: ${err.message}. Retrying in ${Math.floor(waitTime)}ms...`);
+
+                    await new Promise(r => setTimeout(r, waitTime));
+                    delay *= 2;
                 } else {
                     console.error("Non-retryable API Error:", err);
                     throw err;
