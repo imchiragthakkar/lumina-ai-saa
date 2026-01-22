@@ -4,7 +4,8 @@
  * Handles interactions with Google Gemini API
  */
 
-const SYSTEM_API_KEY = ""; // ⚠️ REPLACE THIS with your actual request-level API Key if not using User Settings
+const SYSTEM_API_KEY = "AIzaSyBC1-DScgqwqtBF5P2I4hobuLtuR1lzV2k"; // 
+⚠️ REPLACE THIS with your actual request - level API Key if not using User Settings
 
 export const AIService = {
     /**
