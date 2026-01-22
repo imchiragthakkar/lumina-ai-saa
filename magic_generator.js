@@ -505,11 +505,11 @@ function renderCanvas() {
 
     // 6. Global Unification (The "Nano" Finish)
     // Add subtle grain to bake everything together
-    addNoise(ctx);
+    addNoise(ctx, align);
 }
 
 // Helper: Add cinematic grain
-function addNoise(ctx) {
+function addNoise(ctx, align) {
     const w = ctx.canvas.width;
     const h = ctx.canvas.height;
     const iData = ctx.getImageData(0, 0, w, h);
