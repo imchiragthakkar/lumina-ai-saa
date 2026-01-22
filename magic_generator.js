@@ -385,85 +385,132 @@ function mockAI(topic) {
 function renderCanvas() {
     if (!ctx) return;
 
-    // Background
+    // 1. Draw Background (Image or Fallback)
     if (currentTemplate.bgImageObj) {
-        // Draw AI Generated Image
         try {
-            // Draw image responsibly
-            const ratio = Math.max(canvas.width / currentTemplate.bgImageObj.width, canvas.height / currentTemplate.bgImageObj.height);
-            const centerShift_x = (canvas.width - currentTemplate.bgImageObj.width * ratio) / 2;
-            const centerShift_y = (canvas.height - currentTemplate.bgImageObj.height * ratio) / 2;
+            const img = currentTemplate.bgImageObj;
+            const ratio = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const centerShift_x = (canvas.width - img.width * ratio) / 2;
+            const centerShift_y = (canvas.height - img.height * ratio) / 2;
 
-            ctx.drawImage(currentTemplate.bgImageObj, 0, 0, currentTemplate.bgImageObj.width, currentTemplate.bgImageObj.height,
-                centerShift_x, centerShift_y, currentTemplate.bgImageObj.width * ratio, currentTemplate.bgImageObj.height * ratio);
-
-            // Draw Overlay for text readability
-            ctx.fillStyle = `rgba(0, 0, 0, ${currentTemplate.overlayOpacity || 0.4})`;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            // Apply slight tint/filter if requested (simulated via fillStyle later)
+            ctx.drawImage(img, 0, 0, img.width, img.height,
+                centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
         } catch (e) {
-            console.error("Canvas Image Error", e);
-            ctx.fillStyle = currentTemplate.bg || '#333';
+            ctx.fillStyle = currentTemplate.bg || '#1e293b';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
-    }
-    else if (currentTemplate.bg && currentTemplate.bg.startsWith('linear-gradient')) {
-        const grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-        grad.addColorStop(0, '#6366f1'); // Fallback gradient stops if parsing fails (simplified)
-        grad.addColorStop(1, '#ec4899');
-        // Ideally parse the string, but for now simple fallback or direct fill
-        // For robustness in this phase, let's use a standard gradient if string detected
-        // or improve this later. For now, we will assume standard colors or simple handling.
-        ctx.fillStyle = '#1e293b'; // Fallback for complex gradients in canvas without parser
-        // Actually, let's just use the fallback color if gradient parsing is too complex for this snippet
-        // or check for hex.
-        // Better:
-        ctx.fillStyle = '#0f172a'; // Safe dark default
     } else {
-        ctx.fillStyle = currentTemplate.bg || '#1e293b';
+        // Gradient fallback
+        if (currentTemplate.bg && currentTemplate.bg.startsWith('linear-gradient')) {
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#4f46e5');
+            grad.addColorStop(1, '#9333ea');
+            ctx.fillStyle = grad;
+        } else {
+            ctx.fillStyle = currentTemplate.bg || '#1e293b';
+        }
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Ensure text color matches overlay (white usually better on dark overlay)
-    ctx.fillStyle = currentTemplate.bgImageObj ? '#ffffff' : currentTemplate.textColor;
-    ctx.font = currentTemplate.font;
-    ctx.textAlign = currentTemplate.textAlign;
-    ctx.textBaseline = 'middle';
+    // 2. Smart Overlay (Unification Layer)
+    const overlayStyle = currentTemplate.overlay_style || 'gradient-bottom';
 
-    // Headline
-    const x = currentTemplate.textAlign === 'center' ? canvas.width / 2 :
-        currentTemplate.textAlign === 'right' ? canvas.width - 100 : 100;
-    const y = canvas.height / 2;
+    if (overlayStyle === 'gradient-bottom') {
+        const gradient = ctx.createLinearGradient(0, canvas.height * 0.4, 0, canvas.height);
+        gradient.addColorStop(0, 'rgba(0,0,0,0)');
+        gradient.addColorStop(0.8, 'rgba(0,0,0,0.85)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (overlayStyle === 'vignette') {
+        const gradient = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, canvas.width * 0.3,
+            canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+        );
+        gradient.addColorStop(0, 'rgba(0,0,0,0)');
+        gradient.addColorStop(1, 'rgba(0,0,0,0.7)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (overlayStyle === 'solid-dim') {
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
-    ctx.shadowColor = "rgba(0,0,0,0.3)";
-    ctx.shadowBlur = 10;
-    wrapText(ctx, currentHeadline, x, y, 900, 70);
-    ctx.shadowBlur = 0;
+    // 3. Layout Configuration
+    const composition = currentTemplate.composition || 'centered';
+    let textX = canvas.width / 2;
+    let textY = canvas.height / 2;
+    let align = 'center';
+    let maxTextWidth = 900;
 
-    // --- PERSONALIZATION LAYER ---
+    if (composition === 'hero-bottom') {
+        textY = canvas.height * 0.75;
+        align = 'center';
+    } else if (composition === 'minimal-top') {
+        textY = canvas.height * 0.3;
+        align = 'center';
+    } else if (composition === 'magazine-layout') {
+        textX = 100;
+        textY = canvas.height * 0.7;
+        align = 'left';
+        maxTextWidth = 800;
+    }
 
+    // 4. Draw Branding (Logo) - Smart Integration
     if (logoImage) {
-        // Draw Logo (Bottom Center)
-        const logoWidth = 150;
+        const logoWidth = 140;
         const scale = logoWidth / logoImage.width;
         const logoHeight = logoImage.height * scale;
 
-        // Draw white circle background for logo contrast
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height - 80, 60, 0, 2 * Math.PI);
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.closePath();
+        // Define logo position based on composition to balance the image
+        let logoX = (canvas.width / 2) - (logoWidth / 2);
+        let logoY = 80; // Default top center
 
-        ctx.drawImage(logoImage, (canvas.width / 2) - (logoWidth / 2), canvas.height - 120, logoWidth, logoHeight);
+        if (composition === 'hero-bottom') {
+            // Logo at top to balance text at bottom
+            logoY = 80;
+        } else if (composition === 'minimal-top') {
+            // Logo at bottom
+            logoY = canvas.height - 180;
+        } else if (composition === 'magazine-layout') {
+            // Logo top right
+            logoX = canvas.width - logoWidth - 80;
+            logoY = 80;
+        }
+
+        // Draw discrete shadow behind logo for visibility on any background
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 15;
+        ctx.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
+        ctx.shadowBlur = 0; // Reset
     } else {
-        // Fallback: Text Watermark
-        ctx.font = '30px "Plus Jakarta Sans"';
-        ctx.fillStyle = currentTemplate.accentColor;
+        // Text Watermark
+        ctx.font = 'bold 28px "Plus Jakarta Sans"';
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
         ctx.textAlign = 'center';
-        const watermarkText = userProfile?.businessName ? `@${userProfile.businessName}` : '@lumina.ai';
-        ctx.fillText(watermarkText, canvas.width / 2, canvas.height - 80);
+        const brandName = userProfile?.businessName ? `@${userProfile.businessName}` : '@lumina.ai';
+        ctx.fillText(brandName, canvas.width / 2, canvas.height - 50);
     }
+
+    // 5. Draw Typography
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = currentTemplate.textColor || '#ffffff';
+
+    // Headline
+    ctx.font = currentTemplate.font || 'bold 50px "Plus Jakarta Sans"';
+
+    // Text Shadow for readability
+    ctx.shadowColor = "rgba(0,0,0,0.8)";
+    ctx.shadowBlur = 20;
+
+    if (align === 'left') {
+        wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
+    } else {
+        wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
+    }
+
+    ctx.shadowBlur = 0; // Reset
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
