@@ -248,7 +248,9 @@ async function handleGenerate(topic) {
                 accentColor: result.design.accent_color,
                 font: `${fontWeight} ${fontSize} ${fontStack}`,
                 textAlign: result.design.layout === 'hero' ? 'left' : (result.design.layout === 'bold' ? 'right' : 'center'),
-                layout: result.design.layout
+                layout: result.design.layout,
+                text_style: result.design.text_style,
+                decoration: result.design.decoration
             };
 
             // --- 6. FETCH BACKGROUND IMAGE ---
@@ -492,20 +494,77 @@ function renderCanvas() {
     // 5. Draw Typography
     ctx.textAlign = align;
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = currentTemplate.textColor || '#ffffff';
+
+    // Text Style Handling (Gradient vs Solid)
+    if (currentTemplate.text_style && currentTemplate.text_style.includes('gradient')) {
+        const gradient = ctx.createLinearGradient(0, textY - 40, 0, textY + 40);
+
+        if (currentTemplate.text_style === 'gradient-gold') {
+            gradient.addColorStop(0, '#FFD700');
+            gradient.addColorStop(0.5, '#FDB931');
+            gradient.addColorStop(1, '#C06500');
+        } else if (currentTemplate.text_style === 'gradient-silver') {
+            gradient.addColorStop(0, '#F3F4F6');
+            gradient.addColorStop(0.5, '#9CA3AF');
+            gradient.addColorStop(1, '#4B5563');
+        } else if (currentTemplate.text_style === 'gradient-brand') {
+            gradient.addColorStop(0, currentTemplate.textColor || '#ffffff');
+            gradient.addColorStop(1, currentTemplate.accentColor || '#38bdf8');
+        }
+        ctx.fillStyle = gradient;
+    } else if (currentTemplate.text_style === 'neon') {
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = currentTemplate.accentColor || '#00ffcc';
+        ctx.shadowBlur = 15;
+    } else {
+        ctx.fillStyle = currentTemplate.textColor || '#ffffff';
+    }
 
     // Headline
     ctx.font = currentTemplate.font || 'bold 50px "Plus Jakarta Sans"';
 
-    // Smooth readable shadow check
-    ctx.shadowColor = "rgba(0,0,0,0.8)";
-    ctx.shadowBlur = 20;
-    wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
-    ctx.shadowBlur = 0;
+    // Shadows (unless neon)
+    if (currentTemplate.text_style !== 'neon') {
+        ctx.shadowColor = "rgba(0,0,0,0.8)";
+        ctx.shadowBlur = 20;
+    }
 
-    // 6. Global Unification (The "Nano" Finish)
-    // Add subtle grain to bake everything together
+    wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
+    ctx.shadowBlur = 0; // Reset
+
+    // 6. Context-Aware Decorations
+    drawDecorations(ctx, currentTemplate.decoration, currentTemplate.accentColor);
+
+    // 7. Global Unification (The "Nano" Finish)
     addNoise(ctx, align);
+}
+
+function drawDecorations(ctx, type, color) {
+    if (!type || type === 'none') return;
+
+    ctx.save();
+    ctx.strokeStyle = color || '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 5;
+
+    if (type === 'simple-border') {
+        ctx.strokeRect(30, 30, ctx.canvas.width - 60, ctx.canvas.height - 60);
+    } else if (type === 'ornate-corners') {
+        // Top Left
+        ctx.beginPath();
+        ctx.moveTo(30, 100); ctx.lineTo(30, 30); ctx.lineTo(100, 30);
+        ctx.stroke();
+        // Bottom Right
+        ctx.beginPath();
+        ctx.moveTo(ctx.canvas.width - 30, ctx.canvas.height - 100);
+        ctx.lineTo(ctx.canvas.width - 30, ctx.canvas.height - 30);
+        ctx.lineTo(ctx.canvas.width - 100, ctx.canvas.height - 30);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.restore();
 }
 
 // Helper: Add cinematic grain
