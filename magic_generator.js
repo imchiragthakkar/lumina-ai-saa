@@ -462,34 +462,31 @@ function renderCanvas() {
         const scale = logoWidth / logoImage.width;
         const logoHeight = logoImage.height * scale;
 
-        // Define logo position based on composition to balance the image
         let logoX = (canvas.width / 2) - (logoWidth / 2);
-        let logoY = 80; // Default top center
+        let logoY = 80;
 
-        if (composition === 'hero-bottom') {
-            // Logo at top to balance text at bottom
-            logoY = 80;
-        } else if (composition === 'minimal-top') {
-            // Logo at bottom
-            logoY = canvas.height - 180;
-        } else if (composition === 'magazine-layout') {
-            // Logo top right
-            logoX = canvas.width - logoWidth - 80;
-            logoY = 80;
-        }
+        if (composition === 'hero-bottom') logoY = 80;
+        else if (composition === 'minimal-top') logoY = canvas.height - 180;
+        else if (composition === 'magazine-layout') { logoX = canvas.width - logoWidth - 80; logoY = 80; }
 
-        // Draw discrete shadow behind logo for visibility on any background
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        ctx.shadowBlur = 15;
+        ctx.save();
+        // Native Blending: Logo looks "printed" on the background
+        ctx.globalAlpha = 0.9;
+        ctx.shadowColor = "rgba(0,0,0,0.3)";
+        ctx.shadowBlur = 10;
         ctx.drawImage(logoImage, logoX, logoY, logoWidth, logoHeight);
-        ctx.shadowBlur = 0; // Reset
+        ctx.restore();
     } else {
         // Text Watermark
+        ctx.save();
         ctx.font = 'bold 28px "Plus Jakarta Sans"';
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
         ctx.textAlign = 'center';
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 5;
         const brandName = userProfile?.businessName ? `@${userProfile.businessName}` : '@lumina.ai';
         ctx.fillText(brandName, canvas.width / 2, canvas.height - 50);
+        ctx.restore();
     }
 
     // 5. Draw Typography
@@ -498,6 +495,34 @@ function renderCanvas() {
     ctx.fillStyle = currentTemplate.textColor || '#ffffff';
 
     // Headline
+    ctx.font = currentTemplate.font || 'bold 50px "Plus Jakarta Sans"';
+
+    // Smooth readable shadow check
+    ctx.shadowColor = "rgba(0,0,0,0.8)";
+    ctx.shadowBlur = 20;
+    wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
+    ctx.shadowBlur = 0;
+
+    // 6. Global Unification (The "Nano" Finish)
+    // Add subtle grain to bake everything together
+    addNoise(ctx);
+}
+
+// Helper: Add cinematic grain
+function addNoise(ctx) {
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    const iData = ctx.getImageData(0, 0, w, h);
+    const buffer = iData.data;
+    const amount = 20; // Subtle grain
+
+    for (let i = 0; i < buffer.length; i += 4) {
+        const noise = (Math.random() - 0.5) * amount;
+        buffer[i] = Math.min(255, Math.max(0, buffer[i] + noise));
+        buffer[i + 1] = Math.min(255, Math.max(0, buffer[i + 1] + noise));
+        buffer[i + 2] = Math.min(255, Math.max(0, buffer[i + 2] + noise));
+    }
+    ctx.putImageData(iData, 0, 0);
     ctx.font = currentTemplate.font || 'bold 50px "Plus Jakarta Sans"';
 
     // Text Shadow for readability
