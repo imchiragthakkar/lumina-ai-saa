@@ -44,7 +44,7 @@ export const AIService = {
                 "caption": "Engaging caption incorporating the business context and topic. Use emojis.",
                 "hashtags": "5-7 relevant hashtags mixed (niche + broad)",
                 "design": {
-                    "image_prompt": "A detailed, photorealistic English description of a background image for this post. Mention lighting, style, and objects. Do not include text in the image description.",
+                    "image_prompt": "A detailed, photorealistic English description of a background image. CRITICAL: It MUST visually combine the Industry (e.g., specific products/setting), the Brand Tone, and the Topic. Do not use text.",
                     "overlay_opacity": "Number between 0.2 and 0.6 (e.g. 0.4) for text readability overlay",
                     "visual_style": "One of: 'minimal', 'bold', 'luxury', 'playful', 'nature', 'tech'",
                     "background_color": "Fallback Hex code",
