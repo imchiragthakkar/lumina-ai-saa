@@ -4,8 +4,7 @@
  * Handles interactions with Google Gemini API
  */
 
-const SYSTEM_API_KEY = "AIzaSyBC1-DScgqwqtBF5P2I4hobuLtuR1lzV2k"; // 
-⚠️ REPLACE THIS with your actual request - level API Key if not using User Settings
+const SYSTEM_API_KEY = "AIzaSyBC1-DScgqwqtBF5P2I4hobuLtuR1lzV2k"; // ⚠️ REPLACE THIS with your actual request-level API Key if not using User Settings
 
 export const AIService = {
     /**
@@ -106,8 +105,10 @@ export const AIService = {
                 // Retry logic
                 const isRetryable = err.message.includes('429') || err.message.includes('503') || err.name === 'TypeError';
                 if (isRetryable) {
+                    console.warn(`Attempt ${i + 1} failed: ${err.message}. Retrying...`);
                     // already waited or will wait
                 } else {
+                    console.error("Non-retryable API Error:", err);
                     throw err;
                 }
             }
