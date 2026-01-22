@@ -522,20 +522,8 @@ function addNoise(ctx) {
         buffer[i + 1] = Math.min(255, Math.max(0, buffer[i + 1] + noise));
         buffer[i + 2] = Math.min(255, Math.max(0, buffer[i + 2] + noise));
     }
-    ctx.putImageData(iData, 0, 0);
-    ctx.font = currentTemplate.font || 'bold 50px "Plus Jakarta Sans"';
-
-    // Text Shadow for readability
-    ctx.shadowColor = "rgba(0,0,0,0.8)";
-    ctx.shadowBlur = 20;
-
-    if (align === 'left') {
-        wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
-    } else {
-        wrapText(ctx, currentHeadline, textX, textY, maxTextWidth, 70);
-    }
-
-    ctx.shadowBlur = 0; // Reset
+}
+ctx.putImageData(iData, 0, 0);
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
