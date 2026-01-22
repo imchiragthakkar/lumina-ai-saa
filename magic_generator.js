@@ -522,8 +522,7 @@ function addNoise(ctx) {
         buffer[i + 1] = Math.min(255, Math.max(0, buffer[i + 1] + noise));
         buffer[i + 2] = Math.min(255, Math.max(0, buffer[i + 2] + noise));
     }
-}
-ctx.putImageData(iData, 0, 0);
+    ctx.putImageData(iData, 0, 0);
 }
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
