@@ -45,7 +45,9 @@ export const AIService = {
                 "hashtags": "5-7 relevant hashtags mixed (niche + broad)",
                 "design": {
                     "image_prompt": "A detailed, photorealistic English description of a background image. CRITICAL: It MUST visually combine the Industry (e.g., specific products/setting), the Brand Tone, and the Topic. Do not use text.",
-                    "overlay_opacity": "Number between 0.2 and 0.6 (e.g. 0.4) for text readability overlay",
+                    "composition": "One of: 'centered', 'hero-bottom', 'minimal-top', 'magazine-layout'",
+                    "overlay_style": "One of: 'gradient-bottom', 'vignette', 'solid-dim', 'glass'",
+                    "image_filter": "One of: 'none', 'sepia', 'warm', 'cool', 'muted'",
                     "visual_style": "One of: 'minimal', 'bold', 'luxury', 'playful', 'nature', 'tech'",
                     "background_color": "Fallback Hex code",
                     "text_color": "Hex code (usually #ffffff if using image background)",
