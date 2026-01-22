@@ -312,20 +312,37 @@ function mockAI(topic) {
                 text_color: "#ffffff",
                 accent_color: "#fbbf24",
                 font_mood: "bold",
-                layout: "bold"
+                layout: "bold",
+                image_prompt: "High energy promotional banner background with lightning bolts and bright colors, detailed, 4k"
             }
         };
     } else if (t.includes('coffee') || t.includes('food') || t.includes('menu')) {
         return {
             headline: "Taste the Magic ☕",
             caption: `Fresh flavors waiting for you at ${brand}. Come visit us today!`,
-            hashtags: "#Foodie #Yum #Fresh"
+            hashtags: "#Foodie #Yum #Fresh",
+            design: {
+                background_color: "#3f2c2c",
+                text_color: "#ffffff",
+                accent_color: "#d4a373",
+                font_mood: "handwritten",
+                layout: "center",
+                image_prompt: "Cozy coffee shop interior with latte art and warm lighting, detailed, photorealistic"
+            }
         };
     } else if (t.includes('launch') || t.includes('new') || t.includes('arrival')) {
         return {
             headline: "Just Arrived! ✨",
             caption: `Check out what's new at ${brand}. You're going to love this.`,
-            hashtags: "#New #Launch #Exciting"
+            hashtags: "#New #Launch #Exciting",
+            design: {
+                background_color: "#1e1e2f",
+                text_color: "#ffffff",
+                accent_color: "#00d4ff",
+                font_mood: "modern",
+                layout: "hero",
+                image_prompt: "Futuristic product launch podium with glowing lights and sleek design, 3d render"
+            }
         };
     } else {
         // Generic Fallback
@@ -357,7 +374,8 @@ function mockAI(topic) {
                 text_color: "#e2e8f0",
                 accent_color: "#38bdf8",
                 font_mood: "modern",
-                layout: "center"
+                layout: "center",
+                image_prompt: `A creative abstract background representing ${topic}, professional, high quality, 4k`
             }
         };
     }
